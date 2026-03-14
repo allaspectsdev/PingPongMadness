@@ -122,6 +122,12 @@
     color: #ffd700;
     text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
   }
+  .home-stats {
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 0.5px;
+  }
   .home-reset-btn {
     font-family: 'Fredoka', sans-serif;
     font-size: 13px;
@@ -849,6 +855,7 @@
     <div class="home-title">Ping Pong Madness</div>
     <div class="home-subtitle">by Madeline</div>
     <div class="home-coins" id="homeCoins"></div>
+    <div class="home-stats" id="homeStats"></div>
     <button class="home-play-btn" id="homePlayBtn">Play!</button>
     <button class="home-reset-btn" id="homeResetBtn">Reset Progress</button>
   </div>
@@ -959,6 +966,7 @@ const controlsEl = document.getElementById('controls');
 const homeScreen = document.getElementById('homeScreen');
 const homePlayBtn = document.getElementById('homePlayBtn');
 const homeCoinsEl = document.getElementById('homeCoins');
+const homeStatsEl = document.getElementById('homeStats');
 const homeBtnEl = document.getElementById('homeBtn');
 const soundToggleBtn = document.getElementById('soundToggle');
 const confirmBuyBtn = document.getElementById('confirmBuy');
@@ -1073,13 +1081,20 @@ function loadSave() {
   if (!eq.sfx) eq.sfx = 'sfx_default';
   if (!eq.music) eq.music = 'mus_none';
   equippedSkins = eq;
+  let st = null;
+  try { st = JSON.parse(localStorage.getItem('pp_stats')); } catch(e) {}
+  if (st && typeof st === 'object') {
+    stats = { wins: st.wins || 0, losses: st.losses || 0, bestRally: st.bestRally || 0 };
+  }
 }
 function saveCoinBank() { localStorage.setItem('pp_coins', coinBank); }
 function saveOwned() { localStorage.setItem('pp_owned', JSON.stringify(ownedSkins)); }
 function saveEquipped() { localStorage.setItem('pp_equipped', JSON.stringify(equippedSkins)); }
+function saveStats() { localStorage.setItem('pp_stats', JSON.stringify(stats)); }
 
 let ownedSkins = [];
 let equippedSkins = {};
+let stats = { wins: 0, losses: 0, bestRally: 0 };
 loadSave();
 
 // --- Skin definitions ---
@@ -2232,6 +2247,13 @@ function handlePaddleHit(paddle, direction) {
   spawnParticles(ball.x, ball.y, 8, getPaddleColor()||'#fff');
   rallyCount++;
   hitFreeze = 3;
+  // Rally coin bonuses (single-player only)
+  if (!mpMode && rallyCount >= 5 && rallyCount % 5 === 0) {
+    const bonus = rallyCount === 5 ? 1 : rallyCount === 10 ? 3 : rallyCount === 15 ? 5 : 8;
+    coinBank += bonus; saveCoinBank();
+    floatingTexts.push({ x: W/2, y: 60, text: `Rally ${rallyCount}! +${bonus} coins`, life: 1.5, vy: -1, color: '#ffd700' });
+    playSound('coin');
+  }
 }
 
 function update() {
@@ -2278,6 +2300,7 @@ function update() {
 
   if (ball.x < -BALL_R*2) {
     scores.ai++; scoreFlash.right = 0.8; spawnParticles(0,ball.y,15,'#ff6666'); playSound('score');
+    if (rallyCount > stats.bestRally) { stats.bestRally = rallyCount; saveStats(); }
     triggerScreenShake(); rallyCount = 0;
     if (scores.ai >= lv().winScore) return endGame('You Lose!');
     cloneBall = null;
@@ -2287,6 +2310,7 @@ function update() {
   }
   if (ball.x > W+BALL_R*2) {
     scores.player++; scoreFlash.left = 0.8; spawnParticles(W,ball.y,15,'#66ff66'); playSound('score');
+    if (rallyCount > stats.bestRally) { stats.bestRally = rallyCount; saveStats(); }
     triggerScreenShake(); rallyCount = 0;
     if (scores.player >= lv().winScore) return endGame('You Win!');
     cloneBall = null;
@@ -2330,11 +2354,29 @@ function endGame(text) {
   countdown.active = false;
   canvas.style.transform = ''; screenShake.active = false;
   fadeOutAndStopMusic(200);
-  // In MP, host sends end to guest with swapped text
-  if (mpMode && isHost && conn && conn.open) {
-    try { conn.send({ t: 'e', text: text === 'You Win!' ? 'You Lose!' : 'You Win!', s: [scores.player, scores.ai] }); } catch(e) {}
+  // Track best rally one last time
+  if (rallyCount > stats.bestRally) stats.bestRally = rallyCount;
+  // Determine victory text
+  const isWin = text === 'You Win!';
+  let title;
+  if (isWin) {
+    if (scores.ai === 0) title = 'Perfect!';
+    else if (scores.player - scores.ai === 1) title = 'Clutch Win!';
+    else title = 'You Win!';
+  } else {
+    if (scores.player === 0) title = 'Destroyed!';
+    else if (scores.ai - scores.player === 1) title = 'So Close!';
+    else title = 'You Lose!';
   }
-  if (text === 'You Win!') {
+  // Track stats
+  if (isWin) stats.wins++; else stats.losses++;
+  saveStats();
+  // In MP, host sends end to guest with swapped title
+  if (mpMode && isHost && conn && conn.open) {
+    const guestTitle = isWin ? (scores.player === 0 ? 'Destroyed!' : scores.ai - scores.player === 1 ? 'So Close!' : 'You Lose!') : (scores.ai === 0 ? 'Perfect!' : scores.player - scores.ai === 1 ? 'Clutch Win!' : 'You Win!');
+    try { conn.send({ t: 'e', text: guestTitle, s: [scores.player, scores.ai] }); } catch(e) {}
+  }
+  if (isWin) {
     coinBank += 10; saveCoinBank();
     subtitle.textContent = `${scores.player} - ${scores.ai}  (+10 coins!)`;
     playSound('win');
@@ -2348,7 +2390,7 @@ function endGame(text) {
   draw();
   endGameAnimating = true;
   requestAnimationFrame(endGameAnimation);
-  titleEl.textContent = text;
+  titleEl.textContent = title;
   if (mpMode && conn && conn.open) {
     startBtn.textContent = 'Rematch';
     mpRematchPending = true;
@@ -2383,6 +2425,11 @@ function updateMenuCoins() {
   const txt = `${coinBank} coins`;
   menuCoinsEl.textContent = txt;
   homeCoinsEl.textContent = txt;
+  if (stats.wins || stats.losses || stats.bestRally) {
+    homeStatsEl.textContent = `W: ${stats.wins} · L: ${stats.losses} · Best Rally: ${stats.bestRally}`;
+  } else {
+    homeStatsEl.textContent = '';
+  }
 }
 
 function goToMenu() {
@@ -2392,11 +2439,12 @@ function goToMenu() {
 }
 
 function resetProgress() {
-  if (!confirm('Reset all progress? This will clear all skins and set your balance to 0 coins.')) return;
+  if (!confirm('Reset all progress? This will clear all skins, stats, and set your balance to 0 coins.')) return;
   coinBank = 0;
   ownedSkins = ['bg_default','pad_default','ball_default','sfx_default','mus_none'];
   equippedSkins = { bg: 'bg_default', paddle: 'pad_default', ball: 'ball_default', sfx: 'sfx_default', music: 'mus_none' };
-  saveCoinBank(); saveOwned(); saveEquipped();
+  stats = { wins: 0, losses: 0, bestRally: 0 };
+  saveCoinBank(); saveOwned(); saveEquipped(); saveStats();
   updateMenuCoins();
 }
 
