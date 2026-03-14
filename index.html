@@ -2761,9 +2761,12 @@ canvas.addEventListener('touchstart', handleTouch, { passive: false });
 canvas.addEventListener('touchmove', handleTouch, { passive: false });
 document.addEventListener('touchmove', e => { if (running && !paused) e.preventDefault(); }, { passive: false });
 
-// Pause button — click only (touch-action:manipulation gives instant click on mobile)
+// Pause button — touchend for mobile (preventDefault blocks ghost click), click for desktop
 pauseBtn.addEventListener('touchstart', e => { e.stopPropagation(); }, { passive: true });
-pauseBtn.addEventListener('touchend', e => { e.preventDefault(); e.stopPropagation(); }, { passive: false });
+pauseBtn.addEventListener('touchend', e => {
+  e.preventDefault(); e.stopPropagation();
+  if (running && !gameOver) togglePause();
+}, { passive: false });
 pauseBtn.addEventListener('click', e => {
   e.stopPropagation();
   if (running && !gameOver) togglePause();
@@ -2772,8 +2775,10 @@ function updatePauseBtnVisibility() {
   pauseBtn.style.display = (running && !paused && !gameOver && isTouchDevice) ? 'flex' : 'none';
 }
 
-// Resume / Quit buttons — click only (touch-action:manipulation on buttons)
+// Resume / Quit buttons — touchend for mobile, click for desktop
+resumeBtn.addEventListener('touchend', e => { e.preventDefault(); if (running && paused) togglePause(); }, { passive: false });
 resumeBtn.addEventListener('click', () => { if (running && paused) togglePause(); });
+quitBtn.addEventListener('touchend', e => { e.preventDefault(); quitToMenu(); }, { passive: false });
 quitBtn.addEventListener('click', quitToMenu);
 function quitToMenu() {
   if (running && paused) {
