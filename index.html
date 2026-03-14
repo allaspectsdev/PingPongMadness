@@ -2743,10 +2743,12 @@ canvas.addEventListener('mousemove', e => {
   }
 });
 
-// Touch controls
+// Touch controls — double-tap to pause
+let lastTapTime = 0;
 function handleTouch(e) {
-  if (!running || paused) return;
+  if (!running) return;
   e.preventDefault();
+  if (paused) return;
   const touch = e.touches[0];
   if (!touch) return;
   const rect = canvas.getBoundingClientRect();
@@ -2757,7 +2759,17 @@ function handleTouch(e) {
     player.y = clamp((touch.clientY - rect.top)*scaleY - player.h/2, 0, H - player.h);
   }
 }
-canvas.addEventListener('touchstart', handleTouch, { passive: false });
+canvas.addEventListener('touchstart', e => {
+  handleTouch(e);
+  if (!running || gameOver) return;
+  const now = Date.now();
+  if (now - lastTapTime < 300) {
+    togglePause();
+    lastTapTime = 0;
+  } else {
+    lastTapTime = now;
+  }
+}, { passive: false });
 canvas.addEventListener('touchmove', handleTouch, { passive: false });
 document.addEventListener('touchmove', e => { if (running && !paused) e.preventDefault(); }, { passive: false });
 
