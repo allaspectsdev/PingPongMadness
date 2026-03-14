@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   button { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
@@ -191,7 +192,7 @@
     display: flex;
     gap: 12px;
   }
-  #startBtn, #shopBtn {
+  #startBtn, #mpBtn, #shopBtn {
     font-family: 'Fredoka', sans-serif;
     font-size: 20px;
     font-weight: 700;
@@ -206,17 +207,23 @@
     transition: transform 0.2s, box-shadow 0.2s;
     box-shadow: 0 4px 15px rgba(0,0,0,0.15);
   }
+  #mpBtn {
+    background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+    color: #fff;
+    font-size: 18px;
+    padding: 12px 28px;
+  }
   #shopBtn {
     background: linear-gradient(135deg, #ffd700, #ffaa00);
     color: #5a3a00;
     font-size: 18px;
     padding: 12px 28px;
   }
-  #startBtn:hover, #shopBtn:hover {
+  #startBtn:hover, #mpBtn:hover, #shopBtn:hover {
     transform: translateY(-3px) scale(1.03);
     box-shadow: 0 6px 25px rgba(0,0,0,0.25);
   }
-  #startBtn:active, #shopBtn:active { transform: translateY(0) scale(0.97); }
+  #startBtn:active, #mpBtn:active, #shopBtn:active { transform: translateY(0) scale(0.97); }
   #homeBtn {
     font-family: 'Fredoka', sans-serif;
     font-size: 14px;
@@ -636,7 +643,7 @@
     #levelPicker { gap: 6px; }
     .levelBtn { font-size: 12px; padding: 6px 14px; }
     #menuBtns { gap: 8px; }
-    #startBtn, #shopBtn { font-size: 16px; padding: 10px 28px; }
+    #startBtn, #mpBtn, #shopBtn { font-size: 16px; padding: 10px 28px; }
     #shopBtn { font-size: 15px; padding: 10px 22px; }
     #controls { font-size: 11px; }
     #pauseText { font-size: 30px; }
@@ -671,12 +678,121 @@
     #overlay { gap: 6px; }
     #levelPicker { margin: 2px 0; }
     .levelBtn { padding: 5px 12px; font-size: 11px; }
-    #startBtn, #shopBtn { font-size: 14px; padding: 8px 22px; }
+    #startBtn, #mpBtn, #shopBtn { font-size: 14px; padding: 8px 22px; }
     #controls { font-size: 10px; margin-top: 1px; }
   }
   @media (pointer: coarse) {
     #pauseBtn { display: flex; }
     .pause-buttons { display: flex; }
+  }
+
+  /* ========== MULTIPLAYER OVERLAY ========== */
+  #mpOverlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    background: linear-gradient(135deg, rgba(58,123,213,0.95), rgba(0,210,255,0.85));
+    border-radius: 18px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    z-index: 35;
+  }
+  #mpOverlay.visible { opacity: 1; pointer-events: auto; }
+  .mp-title {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.15);
+  }
+  .mp-code {
+    font-size: 52px;
+    font-weight: 700;
+    letter-spacing: 12px;
+    color: #ffd700;
+    text-shadow: 0 0 20px rgba(255,215,0,0.4);
+    font-family: 'Fredoka', monospace;
+  }
+  .mp-status {
+    font-size: 14px;
+    color: rgba(255,255,255,0.8);
+  }
+  .mp-input {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    width: 200px;
+    padding: 10px 16px;
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 12px;
+    outline: none;
+  }
+  .mp-input::placeholder {
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 2px;
+    font-size: 16px;
+  }
+  .mp-input:focus {
+    border-color: #ffd700;
+    background: rgba(255,255,255,0.2);
+  }
+  .mp-btn {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    padding: 12px 32px;
+    background: #fff;
+    color: #3a7bd5;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  }
+  .mp-btn:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  }
+  .mp-btn:active { transform: translateY(0) scale(0.97); }
+  .mp-btn.secondary {
+    background: rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.9);
+    border: 2px solid rgba(255,255,255,0.25);
+    box-shadow: none;
+  }
+  .mp-options, .mp-lobby, .mp-join {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .mp-or {
+    font-size: 14px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 600;
+    letter-spacing: 2px;
+  }
+  .mp-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.9);
+  }
+  @media (max-width: 600px) {
+    .mp-title { font-size: 24px; }
+    .mp-code { font-size: 40px; letter-spacing: 8px; }
+    .mp-btn { font-size: 15px; padding: 10px 24px; }
+    .mp-input { font-size: 22px; width: 160px; }
+    #mpBtn { font-size: 14px; padding: 10px 20px; }
   }
 </style>
 </head>
@@ -707,6 +823,7 @@
     </div>
     <div id="menuBtns">
       <button id="startBtn">Start</button>
+      <button id="mpBtn">2 Player</button>
       <button id="shopBtn">Shop</button>
     </div>
     <div id="controls">Mouse or W/S &bull; Space to pause</div>
@@ -748,6 +865,25 @@
       </div>
     </div>
   </div>
+  <div id="mpOverlay">
+    <div class="mp-title">2 Player</div>
+    <div class="mp-options" id="mpOptions">
+      <button class="mp-btn" id="mpCreateBtn">Create Game</button>
+      <div class="mp-or">OR</div>
+      <button class="mp-btn secondary" id="mpJoinShowBtn">Join Game</button>
+    </div>
+    <div class="mp-lobby" id="mpLobby" style="display:none">
+      <div class="mp-label">Share this code:</div>
+      <div class="mp-code" id="mpCodeDisplay"></div>
+      <div class="mp-status" id="mpHostStatus">Creating game...</div>
+    </div>
+    <div class="mp-join" id="mpJoinPanel" style="display:none">
+      <input class="mp-input" id="mpCodeInput" maxlength="4" placeholder="CODE" autocomplete="off" autocapitalize="characters">
+      <button class="mp-btn" id="mpConnectBtn">Connect</button>
+      <div class="mp-status" id="mpJoinStatus"></div>
+    </div>
+    <button class="shop-back" id="mpBackBtn">Back</button>
+  </div>
 </div>
 <script>
 const canvas = document.getElementById('game');
@@ -777,6 +913,13 @@ const homeBtnEl = document.getElementById('homeBtn');
 const soundToggleBtn = document.getElementById('soundToggle');
 const confirmBuyBtn = document.getElementById('confirmBuy');
 const confirmCancelBtn = document.getElementById('confirmCancel');
+const mpBtnEl = document.getElementById('mpBtn');
+const mpOverlayEl = document.getElementById('mpOverlay');
+const mpCreateBtn = document.getElementById('mpCreateBtn');
+const mpJoinShowBtn = document.getElementById('mpJoinShowBtn');
+const mpConnectBtn = document.getElementById('mpConnectBtn');
+const mpCodeInput = document.getElementById('mpCodeInput');
+const mpBackBtn = document.getElementById('mpBackBtn');
 const isTouchDevice = matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
 // --- Difficulty levels ---
@@ -812,6 +955,14 @@ let coinTimer = 0;
 let nextCoinSpawn = 0;
 let floatingTexts = [];
 let lastHitter = 'none';
+
+// --- Multiplayer state ---
+let mpMode = false;
+let isHost = false;
+let peer = null;
+let conn = null;
+let gameCode = '';
+let guestPaddleY = 0;
 
 // --- Power-up state ---
 const POWERUP_SPAWN_MIN = 10000;
@@ -1974,10 +2125,14 @@ function update() {
   if (keys['s']||keys['arrowdown']) player.y += PADDLE_SPEED;
   player.y = clamp(player.y, 0, H - player.h);
 
-  const aiTarget = ball.y - ai.h/2 + Math.sin(Date.now()/500)*lv().aiWobble;
-  const aiDiff = aiTarget - ai.y;
-  if (Math.abs(aiDiff) > 3) ai.y += Math.sign(aiDiff)*Math.min(lv().aiSpeed, Math.abs(aiDiff));
-  ai.y = clamp(ai.y, 0, H-lv().paddleH);
+  if (mpMode && isHost) {
+    ai.y = clamp(guestPaddleY * H, 0, H - ai.h);
+  } else if (!mpMode) {
+    const aiTarget = ball.y - ai.h/2 + Math.sin(Date.now()/500)*lv().aiWobble;
+    const aiDiff = aiTarget - ai.y;
+    if (Math.abs(aiDiff) > 3) ai.y += Math.sign(aiDiff)*Math.min(lv().aiSpeed, Math.abs(aiDiff));
+    ai.y = clamp(ai.y, 0, H-lv().paddleH);
+  }
 
   ball.trail.push({ x: ball.x, y: ball.y });
   if (ball.trail.length > 8) ball.trail.shift();
@@ -2017,15 +2172,31 @@ function update() {
     const svx = ball.vx, svy = ball.vy;
     startCountdown(() => { ball.vx = svx; ball.vy = svy; });
   }
-  updateCoins(); updatePowerups(); updateCloneBall(); updateFloatingTexts(); updateParticles();
+  if (!mpMode) { updateCoins(); updatePowerups(); updateCloneBall(); }
+  updateFloatingTexts(); updateParticles();
 }
 
 function loop() {
   if (!running) return;
   updateScreenShake();
   if (!paused) {
-    if (hitFreeze > 0) { hitFreeze--; }
-    else { update(); draw(); }
+    if (mpMode && !isHost) {
+      // Guest: handle keyboard, send input, render from host state
+      if (keys['w']||keys['arrowup']) ai.y -= PADDLE_SPEED;
+      if (keys['s']||keys['arrowdown']) ai.y += PADDLE_SPEED;
+      ai.y = clamp(ai.y, 0, H - ai.h);
+      if (conn && conn.open) try { conn.send({ t: 'i', y: ai.y / H }); } catch(e) {}
+      ball.trail.push({ x: ball.x, y: ball.y });
+      if (ball.trail.length > 8) ball.trail.shift();
+      updateParticles(); updateFloatingTexts(); updateConfetti();
+      if (countdown.active) updateCountdown();
+      draw();
+    } else if (hitFreeze > 0) {
+      hitFreeze--;
+    } else {
+      update(); draw();
+      if (mpMode && isHost) sendHostState();
+    }
   }
   requestAnimationFrame(loop);
 }
@@ -2037,6 +2208,10 @@ function endGame(text) {
   countdown.active = false;
   canvas.style.transform = ''; screenShake.active = false;
   fadeOutAndStopMusic(200);
+  // In MP, host sends end to guest with swapped text
+  if (mpMode && isHost && conn && conn.open) {
+    try { conn.send({ t: 'e', text: text === 'You Win!' ? 'You Lose!' : 'You Win!', s: [scores.player, scores.ai] }); } catch(e) {}
+  }
   if (text === 'You Win!') {
     coinBank += 10; saveCoinBank();
     subtitle.textContent = `${scores.player} - ${scores.ai}  (+10 coins!)`;
@@ -2265,10 +2440,219 @@ function closeConfirm() {
   document.getElementById('confirmModal').classList.remove('visible');
 }
 
+// --- Multiplayer logic ---
+function generateGameCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < 4; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  return code;
+}
+
+function openMpOverlay() {
+  overlay.classList.add('hidden');
+  document.getElementById('mpOptions').style.display = 'flex';
+  document.getElementById('mpLobby').style.display = 'none';
+  document.getElementById('mpJoinPanel').style.display = 'none';
+  mpOverlayEl.classList.add('visible');
+}
+
+function closeMpOverlay() {
+  cleanupMultiplayer();
+  mpOverlayEl.classList.remove('visible');
+  overlay.classList.remove('hidden');
+  updateMenuCoins();
+}
+
+function mpCreateGame() {
+  gameCode = generateGameCode();
+  isHost = true;
+  document.getElementById('mpOptions').style.display = 'none';
+  document.getElementById('mpLobby').style.display = 'flex';
+  document.getElementById('mpCodeDisplay').textContent = gameCode;
+  document.getElementById('mpHostStatus').textContent = 'Creating game...';
+
+  peer = new Peer('ppm-' + gameCode, { debug: 0 });
+  peer.on('open', () => {
+    document.getElementById('mpHostStatus').textContent = 'Waiting for opponent...';
+  });
+  peer.on('connection', connection => {
+    conn = connection;
+    conn.on('open', () => {
+      document.getElementById('mpHostStatus').textContent = 'Opponent connected! Starting...';
+      setTimeout(() => startMultiplayer(), 800);
+    });
+    conn.on('data', data => {
+      if (data.t === 'i') guestPaddleY = data.y;
+    });
+    conn.on('close', () => handleMpDisconnect());
+  });
+  peer.on('error', err => {
+    if (err.type === 'unavailable-id') {
+      gameCode = generateGameCode();
+      document.getElementById('mpCodeDisplay').textContent = gameCode;
+      peer.destroy();
+      peer = new Peer('ppm-' + gameCode, { debug: 0 });
+      peer.on('open', () => {
+        document.getElementById('mpHostStatus').textContent = 'Waiting for opponent...';
+      });
+      peer.on('connection', connection => {
+        conn = connection;
+        conn.on('open', () => {
+          document.getElementById('mpHostStatus').textContent = 'Opponent connected! Starting...';
+          setTimeout(() => startMultiplayer(), 800);
+        });
+        conn.on('data', data => {
+          if (data.t === 'i') guestPaddleY = data.y;
+        });
+        conn.on('close', () => handleMpDisconnect());
+      });
+      peer.on('error', err2 => {
+        document.getElementById('mpHostStatus').textContent = 'Error: ' + err2.type;
+      });
+    } else {
+      document.getElementById('mpHostStatus').textContent = 'Error: ' + err.type;
+    }
+  });
+}
+
+function mpShowJoin() {
+  document.getElementById('mpOptions').style.display = 'none';
+  document.getElementById('mpJoinPanel').style.display = 'flex';
+  document.getElementById('mpJoinStatus').textContent = '';
+  mpCodeInput.value = '';
+  mpCodeInput.focus();
+}
+
+function mpConnect() {
+  const code = mpCodeInput.value.toUpperCase().trim();
+  if (code.length !== 4) {
+    document.getElementById('mpJoinStatus').textContent = 'Enter a 4-character code';
+    return;
+  }
+  gameCode = code;
+  isHost = false;
+  document.getElementById('mpJoinStatus').textContent = 'Connecting...';
+  mpConnectBtn.disabled = true;
+
+  peer = new Peer(undefined, { debug: 0 });
+  peer.on('open', () => {
+    conn = peer.connect('ppm-' + gameCode, { reliable: true });
+    conn.on('open', () => {
+      document.getElementById('mpJoinStatus').textContent = 'Connected! Waiting for host to start...';
+    });
+    conn.on('data', data => handleGuestData(data));
+    conn.on('close', () => handleMpDisconnect());
+  });
+  peer.on('error', err => {
+    document.getElementById('mpJoinStatus').textContent = err.type === 'peer-unavailable' ? 'Game not found — check the code' : 'Error: ' + err.type;
+    mpConnectBtn.disabled = false;
+  });
+}
+
+function startMultiplayer() {
+  mpMode = true;
+  mpOverlayEl.classList.remove('visible');
+  initGame();
+  overlay.classList.add('hidden');
+  homeScreen.classList.add('hidden');
+  pauseOverlay.classList.remove('visible');
+  shopOverlay.classList.remove('visible');
+  levelIndicator.textContent = lv().label + ' (2P)';
+  levelIndicator.style.color = 'rgba(255,255,255,0.25)';
+  running = true; gameOver = false;
+  startMusic();
+
+  if (isHost) {
+    conn.send({ t: 's', level: currentLevel });
+    const svx = ball.vx, svy = ball.vy;
+    startCountdown(() => { ball.vx = svx; ball.vy = svy; });
+  }
+  loop();
+  updatePauseBtnVisibility();
+}
+
+function sendHostState() {
+  if (!conn || !conn.open || !isHost) return;
+  const state = {
+    t: 'u',
+    b: [ball.x / W, ball.y / H],
+    bv: [ball.vx / W, ball.vy / H],
+    bs: ball.speed,
+    p: player.y / H,
+    a: ai.y / H,
+    s: [scores.player, scores.ai],
+    cd: countdown.active ? 1 : 0,
+    rc: rallyCount,
+    ph: player.h / H,
+    ah: ai.h / H,
+  };
+  try { conn.send(state); } catch(e) {}
+}
+
+function handleGuestData(data) {
+  if (data.t === 's') {
+    currentLevel = data.level;
+    selectLevel(currentLevel);
+    startMultiplayer();
+  } else if (data.t === 'u') {
+    ball.x = data.b[0] * W;
+    ball.y = data.b[1] * H;
+    ball.vx = data.bv[0] * W;
+    ball.vy = data.bv[1] * H;
+    ball.speed = data.bs;
+    player.y = data.p * H;
+    player.h = data.ph * H;
+    ai.h = data.ah * H;
+    scores.player = data.s[0];
+    scores.ai = data.s[1];
+    rallyCount = data.rc;
+    if (data.cd && !countdown.active) {
+      countdown.active = true;
+      countdown.startTime = Date.now();
+      lastCountdownStep = -1;
+    }
+    if (!data.cd) countdown.active = false;
+  } else if (data.t === 'e') {
+    scores.player = data.s[0];
+    scores.ai = data.s[1];
+    endGame(data.text);
+  }
+}
+
+function handleMpDisconnect() {
+  if (running && mpMode) {
+    running = false; paused = false; gameOver = true;
+    canvas.style.transform = ''; screenShake.active = false;
+    fadeOutAndStopMusic(200);
+    pauseOverlay.classList.remove('visible');
+    titleEl.textContent = 'Disconnected';
+    subtitle.textContent = 'Opponent left the game';
+    startBtn.textContent = 'Back to Menu';
+    overlay.classList.remove('hidden');
+    updatePauseBtnVisibility();
+  }
+  cleanupMultiplayer();
+}
+
+function cleanupMultiplayer() {
+  if (conn) { try { conn.close(); } catch(e) {} conn = null; }
+  if (peer) { try { peer.destroy(); } catch(e) {} peer = null; }
+  mpMode = false;
+  isHost = false;
+  guestPaddleY = 0;
+  mpConnectBtn.disabled = false;
+}
+
 // --- Event wiring ---
 homePlayBtn.addEventListener('click', goToMenu);
 homeBtnEl.addEventListener('click', goHome);
 startBtn.addEventListener('click', start);
+mpBtnEl.addEventListener('click', openMpOverlay);
+mpCreateBtn.addEventListener('click', mpCreateGame);
+mpJoinShowBtn.addEventListener('click', mpShowJoin);
+mpConnectBtn.addEventListener('click', mpConnect);
+mpCodeInput.addEventListener('keydown', e => { if (e.key === 'Enter') mpConnect(); });
+mpBackBtn.addEventListener('click', closeMpOverlay);
 shopBtnEl.addEventListener('click', openShop);
 shopBackBtn.addEventListener('click', closeShop);
 shopTabs.forEach(tab => {
@@ -2300,6 +2684,8 @@ document.addEventListener('keydown', e => {
       closeConfirm();
     } else if (running && paused) {
       quitToMenu();
+    } else if (mpOverlayEl.classList.contains('visible')) {
+      closeMpOverlay();
     } else if (shopOverlay.classList.contains('visible')) {
       closeShop();
     }
@@ -2311,7 +2697,11 @@ document.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
 canvas.addEventListener('mousemove', e => {
   if (!running || paused) return;
   const rect = canvas.getBoundingClientRect();
-  player.y = clamp(e.clientY - rect.top - player.h/2, 0, H - player.h);
+  if (mpMode && !isHost) {
+    ai.y = clamp(e.clientY - rect.top - ai.h/2, 0, H - ai.h);
+  } else {
+    player.y = clamp(e.clientY - rect.top - player.h/2, 0, H - player.h);
+  }
 });
 
 // Touch controls
@@ -2322,7 +2712,11 @@ function handleTouch(e) {
   if (!touch) return;
   const rect = canvas.getBoundingClientRect();
   const scaleY = H / rect.height;
-  player.y = clamp((touch.clientY - rect.top)*scaleY - player.h/2, 0, H - player.h);
+  if (mpMode && !isHost) {
+    ai.y = clamp((touch.clientY - rect.top)*scaleY - ai.h/2, 0, H - ai.h);
+  } else {
+    player.y = clamp((touch.clientY - rect.top)*scaleY - player.h/2, 0, H - player.h);
+  }
 }
 canvas.addEventListener('touchstart', handleTouch, { passive: false });
 canvas.addEventListener('touchmove', handleTouch, { passive: false });
@@ -2357,6 +2751,7 @@ function quitToMenu() {
     countdown.active = false;
     canvas.style.transform = ''; screenShake.active = false;
     fadeOutAndStopMusic(200);
+    cleanupMultiplayer();
     pauseOverlay.classList.remove('visible');
     titleEl.textContent = 'Ping Pong Madness';
     subtitle.textContent = `First to ${lv().winScore} wins`;
