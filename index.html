@@ -2283,7 +2283,7 @@ function goToMenu() {
 
 function resetProgress() {
   if (!confirm('Reset all progress? This will clear all skins and set your balance to 1000 coins.')) return;
-  coinBank = 1000;
+  coinBank = 0;
   ownedSkins = ['bg_default','pad_default','ball_default','sfx_default','mus_none'];
   equippedSkins = { bg: 'bg_default', paddle: 'pad_default', ball: 'ball_default', sfx: 'sfx_default', music: 'mus_none' };
   saveCoinBank(); saveOwned(); saveEquipped();
