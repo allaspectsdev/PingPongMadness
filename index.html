@@ -72,6 +72,9 @@
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-20px); }
   }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
   .home-title {
     font-size: 52px;
     font-weight: 700;
@@ -894,9 +897,15 @@
   <div id="mpOverlay">
     <div class="mp-title">2 Player</div>
     <div class="mp-options" id="mpOptions">
+      <button class="mp-btn" id="mpMatchMeBtn" style="background:linear-gradient(135deg,#ffd700,#ff8c00);color:#fff;font-size:20px;padding:14px 36px">Match Me</button>
+      <div class="mp-or">OR</div>
       <button class="mp-btn" id="mpCreateBtn">Create Game</button>
       <div class="mp-or">OR</div>
       <button class="mp-btn secondary" id="mpJoinShowBtn">Join Game</button>
+    </div>
+    <div class="mp-lobby" id="mpMatchPanel" style="display:none">
+      <div class="mp-status" id="mpMatchStatus">Searching for opponent...</div>
+      <div class="mp-match-spinner" style="width:40px;height:40px;border:4px solid rgba(255,255,255,0.2);border-top-color:#ffd700;border-radius:50%;animation:spin 0.8s linear infinite"></div>
     </div>
     <div class="mp-lobby" id="mpLobby" style="display:none">
       <div class="mp-label">Share this code:</div>
@@ -947,6 +956,8 @@ const mpJoinShowBtn = document.getElementById('mpJoinShowBtn');
 const mpConnectBtn = document.getElementById('mpConnectBtn');
 const mpCodeInput = document.getElementById('mpCodeInput');
 const mpBackBtn = document.getElementById('mpBackBtn');
+const mpMatchMeBtn = document.getElementById('mpMatchMeBtn');
+let matchPollTimer = null;
 const isTouchDevice = matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
 // --- Difficulty levels ---
@@ -2500,10 +2511,16 @@ function openMpOverlay() {
   document.getElementById('mpOptions').style.display = 'flex';
   document.getElementById('mpLobby').style.display = 'none';
   document.getElementById('mpJoinPanel').style.display = 'none';
+  document.getElementById('mpMatchPanel').style.display = 'none';
   mpOverlayEl.classList.add('visible');
 }
 
 function closeMpOverlay() {
+  if (matchPollTimer) { clearInterval(matchPollTimer); matchPollTimer = null; }
+  // Remove from matchmaking queue if we were in it
+  if (peer && peer.id) {
+    fetch('/api/match', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ peerId: peer.id }) }).catch(() => {});
+  }
   cleanupMultiplayer();
   mpOverlayEl.classList.remove('visible');
   overlay.classList.remove('hidden');
@@ -2593,6 +2610,84 @@ function mpConnect() {
   peer.on('error', err => {
     document.getElementById('mpJoinStatus').textContent = err.type === 'peer-unavailable' ? 'Game not found — check the code' : 'Error: ' + err.type;
     mpConnectBtn.disabled = false;
+  });
+}
+
+function mpMatchMe() {
+  document.getElementById('mpOptions').style.display = 'none';
+  document.getElementById('mpMatchPanel').style.display = 'flex';
+  document.getElementById('mpMatchStatus').textContent = 'Connecting to server...';
+
+  peer = new Peer(undefined, PEER_CONFIG);
+  peer.on('open', peerId => {
+    document.getElementById('mpMatchStatus').textContent = 'Searching for opponent...';
+
+    // Post to matchmaking queue
+    fetch('/api/match', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ peerId })
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.matched) {
+        // Matched immediately — we are the guest, connect to the host
+        isHost = false;
+        document.getElementById('mpMatchStatus').textContent = 'Opponent found! Connecting...';
+        conn = peer.connect(data.opponentPeerId, { reliable: true });
+        conn.on('open', () => {
+          document.getElementById('mpMatchStatus').textContent = 'Connected! Starting...';
+        });
+        conn.on('data', d => handleGuestData(d));
+        conn.on('close', () => handleMpDisconnect());
+      } else {
+        // We are the host — wait for a guest to connect via PeerJS
+        isHost = true;
+        document.getElementById('mpMatchStatus').textContent = 'Waiting for opponent...';
+        peer.on('connection', connection => {
+          conn = connection;
+          if (matchPollTimer) { clearInterval(matchPollTimer); matchPollTimer = null; }
+          conn.on('open', () => {
+            document.getElementById('mpMatchStatus').textContent = 'Opponent found! Starting...';
+            setTimeout(() => startMultiplayer(), 800);
+          });
+          conn.on('data', d => {
+            if (d.t === 'i') guestPaddleY = d.y;
+          });
+          conn.on('close', () => handleMpDisconnect());
+        });
+        // Poll in case we get matched but guest hasn't connected yet (timeout detection)
+        matchPollTimer = setInterval(() => {
+          fetch('/api/match/' + encodeURIComponent(peerId))
+            .then(r => r.json())
+            .then(status => {
+              if (status.expired) {
+                clearInterval(matchPollTimer); matchPollTimer = null;
+                document.getElementById('mpMatchStatus').textContent = 'No opponent found. Try again!';
+                setTimeout(() => {
+                  document.getElementById('mpMatchPanel').style.display = 'none';
+                  document.getElementById('mpOptions').style.display = 'flex';
+                  cleanupMultiplayer();
+                }, 2000);
+              }
+            })
+            .catch(() => {});
+        }, 5000);
+      }
+    })
+    .catch(err => {
+      document.getElementById('mpMatchStatus').textContent = 'Server error — try again';
+      setTimeout(() => {
+        document.getElementById('mpMatchPanel').style.display = 'none';
+        document.getElementById('mpOptions').style.display = 'flex';
+        cleanupMultiplayer();
+      }, 2000);
+    });
+  });
+
+  peer.on('error', err => {
+    document.getElementById('mpMatchStatus').textContent = 'Error: ' + err.type;
+    if (matchPollTimer) { clearInterval(matchPollTimer); matchPollTimer = null; }
   });
 }
 
@@ -2696,6 +2791,7 @@ document.getElementById('homeResetBtn').addEventListener('click', resetProgress)
 homeBtnEl.addEventListener('click', goHome);
 startBtn.addEventListener('click', start);
 mpBtnEl.addEventListener('click', openMpOverlay);
+mpMatchMeBtn.addEventListener('click', mpMatchMe);
 mpCreateBtn.addEventListener('click', mpCreateGame);
 mpJoinShowBtn.addEventListener('click', mpShowJoin);
 mpConnectBtn.addEventListener('click', mpConnect);
