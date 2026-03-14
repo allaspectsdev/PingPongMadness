@@ -119,6 +119,23 @@
     color: #ffd700;
     text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
   }
+  .home-reset-btn {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 16px;
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.45);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .home-reset-btn:hover, .home-reset-btn:active {
+    background: rgba(255,100,100,0.2);
+    color: rgba(255,255,255,0.8);
+    border-color: rgba(255,100,100,0.3);
+  }
 
   /* ========== GAME MENU OVERLAY ========== */
   #overlay {
@@ -808,6 +825,7 @@
     <div class="home-subtitle">by Madeline</div>
     <div class="home-coins" id="homeCoins"></div>
     <button class="home-play-btn" id="homePlayBtn">Play!</button>
+    <button class="home-reset-btn" id="homeResetBtn">Reset Progress</button>
   </div>
 
   <!-- GAME MENU -->
@@ -2238,7 +2256,7 @@ let lastPauseTime = 0;
 function togglePause() {
   if (!running || gameOver) return;
   const now = Date.now();
-  if (now - lastPauseTime < 300) return;
+  if (now - lastPauseTime < 400) return;
   lastPauseTime = now;
   paused = !paused;
   pauseOverlay.classList.toggle('visible', paused);
@@ -2260,6 +2278,15 @@ function updateMenuCoins() {
 function goToMenu() {
   homeScreen.classList.add('hidden');
   overlay.classList.remove('hidden');
+  updateMenuCoins();
+}
+
+function resetProgress() {
+  if (!confirm('Reset all progress? This will clear all skins and set your balance to 1000 coins.')) return;
+  coinBank = 1000;
+  ownedSkins = ['bg_default','pad_default','ball_default','sfx_default','mus_none'];
+  equippedSkins = { bg: 'bg_default', paddle: 'pad_default', ball: 'ball_default', sfx: 'sfx_default', music: 'mus_none' };
+  saveCoinBank(); saveOwned(); saveEquipped();
   updateMenuCoins();
 }
 
@@ -2645,6 +2672,7 @@ function cleanupMultiplayer() {
 
 // --- Event wiring ---
 homePlayBtn.addEventListener('click', goToMenu);
+document.getElementById('homeResetBtn').addEventListener('click', resetProgress);
 homeBtnEl.addEventListener('click', goHome);
 startBtn.addEventListener('click', start);
 mpBtnEl.addEventListener('click', openMpOverlay);
@@ -2722,27 +2750,20 @@ canvas.addEventListener('touchstart', handleTouch, { passive: false });
 canvas.addEventListener('touchmove', handleTouch, { passive: false });
 document.addEventListener('touchmove', e => { if (running && !paused) e.preventDefault(); }, { passive: false });
 
-// Pause button (touch)
-pauseBtn.addEventListener('touchstart', e => {
-  e.stopPropagation();
-}, { passive: true });
+// Pause button — click only (touch-action:manipulation gives instant click on mobile)
+pauseBtn.addEventListener('touchstart', e => { e.stopPropagation(); }, { passive: true });
+pauseBtn.addEventListener('touchend', e => { e.preventDefault(); e.stopPropagation(); }, { passive: false });
 pauseBtn.addEventListener('click', e => {
   e.stopPropagation();
   if (running && !gameOver) togglePause();
 });
-pauseBtn.addEventListener('touchend', e => {
-  e.preventDefault(); e.stopPropagation();
-  if (running && !gameOver) togglePause();
-}, { passive: false });
 function updatePauseBtnVisibility() {
   pauseBtn.style.display = (running && !paused && !gameOver && isTouchDevice) ? 'flex' : 'none';
 }
 
-// Resume / Quit buttons
+// Resume / Quit buttons — click only (touch-action:manipulation on buttons)
 resumeBtn.addEventListener('click', () => { if (running && paused) togglePause(); });
-resumeBtn.addEventListener('touchend', e => { e.preventDefault(); if (running && paused) togglePause(); }, { passive: false });
 quitBtn.addEventListener('click', quitToMenu);
-quitBtn.addEventListener('touchend', e => { e.preventDefault(); quitToMenu(); }, { passive: false });
 function quitToMenu() {
   if (running && paused) {
     running = false; paused = false; gameOver = false;
@@ -2763,7 +2784,10 @@ function quitToMenu() {
 }
 
 if (!isTouchDevice) canvas.style.cursor = 'none';
-if (isTouchDevice) controlsEl.textContent = 'Touch to move paddle';
+if (isTouchDevice) {
+  controlsEl.textContent = 'Touch to move paddle';
+  document.getElementById('pauseHint').textContent = 'Tap Resume or Quit';
+}
 
 // Hook state changes for pause btn
 const _origTogglePause = togglePause;
