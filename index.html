@@ -2498,7 +2498,7 @@ function mpCreateGame() {
   document.getElementById('mpCodeDisplay').textContent = gameCode;
   document.getElementById('mpHostStatus').textContent = 'Creating game...';
 
-  peer = new Peer('ppm-' + gameCode, { debug: 0 });
+  peer = new Peer('ppm-' + gameCode, { host: 'pingpongmadness.com', port: 443, path: '/peerjs', secure: true, debug: 0 });
   peer.on('open', () => {
     document.getElementById('mpHostStatus').textContent = 'Waiting for opponent...';
   });
@@ -2518,7 +2518,7 @@ function mpCreateGame() {
       gameCode = generateGameCode();
       document.getElementById('mpCodeDisplay').textContent = gameCode;
       peer.destroy();
-      peer = new Peer('ppm-' + gameCode, { debug: 0 });
+      peer = new Peer('ppm-' + gameCode, { host: 'pingpongmadness.com', port: 443, path: '/peerjs', secure: true, debug: 0 });
       peer.on('open', () => {
         document.getElementById('mpHostStatus').textContent = 'Waiting for opponent...';
       });
@@ -2561,7 +2561,7 @@ function mpConnect() {
   document.getElementById('mpJoinStatus').textContent = 'Connecting...';
   mpConnectBtn.disabled = true;
 
-  peer = new Peer(undefined, { debug: 0 });
+  peer = new Peer(undefined, { host: 'pingpongmadness.com', port: 443, path: '/peerjs', secure: true, debug: 0 });
   peer.on('open', () => {
     conn = peer.connect('ppm-' + gameCode, { reliable: true });
     conn.on('open', () => {
