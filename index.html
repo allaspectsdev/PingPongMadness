@@ -42,6 +42,19 @@
   }
 
   /* ========== HOME SCREEN ========== */
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  @keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+  @keyframes coinGlow {
+    0%, 100% { text-shadow: 1px 1px 0 rgba(0,0,0,0.2), 0 0 8px rgba(255,215,0,0.3); }
+    50% { text-shadow: 1px 1px 0 rgba(0,0,0,0.2), 0 0 20px rgba(255,215,0,0.7); }
+  }
   #homeScreen {
     position: absolute;
     inset: 0;
@@ -50,7 +63,9 @@
     justify-content: center;
     align-items: center;
     gap: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 30%, #f093fb 60%, #f5576c 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #667eea 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 8s ease infinite;
     border-radius: 18px;
     z-index: 20;
     transition: opacity 0.5s, transform 0.5s;
@@ -65,12 +80,11 @@
     height: 60px;
     border-radius: 50%;
     background: #fff;
-    box-shadow: 0 0 20px rgba(255,255,255,0.5), 0 4px 15px rgba(0,0,0,0.2);
     animation: homeBounce 1.2s ease-in-out infinite;
   }
   @keyframes homeBounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-20px); }
+    0%, 100% { transform: translateY(0); box-shadow: 0 0 20px rgba(255,255,255,0.5), 0 4px 15px rgba(0,0,0,0.2), 0 18px 24px rgba(0,0,0,0.18); }
+    50% { transform: translateY(-20px); box-shadow: 0 0 20px rgba(255,255,255,0.5), 0 4px 15px rgba(0,0,0,0.2), 0 38px 30px rgba(0,0,0,0.08); }
   }
   @keyframes spin {
     to { transform: rotate(360deg); }
@@ -78,11 +92,16 @@
   .home-title {
     font-size: 52px;
     font-weight: 700;
-    color: #fff;
-    text-shadow: 3px 3px 0 rgba(0,0,0,0.15), 0 0 30px rgba(255,255,255,0.3);
     letter-spacing: 2px;
     text-align: center;
     line-height: 1.1;
+    background: linear-gradient(90deg, #fff 0%, #fff 35%, rgba(255,215,0,0.9) 50%, #fff 65%, #fff 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 3.5s linear infinite;
+    filter: drop-shadow(3px 3px 0 rgba(0,0,0,0.15));
   }
   .home-subtitle {
     font-size: 18px;
@@ -108,24 +127,24 @@
     animation: playPulse 2s ease-in-out infinite;
   }
   @keyframes playPulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
+    0%, 100% { transform: scale(1); box-shadow: 0 6px 20px rgba(0,0,0,0.2), 0 0 30px rgba(255,255,255,0.2); }
+    50% { transform: scale(1.05); box-shadow: 0 8px 25px rgba(0,0,0,0.25), 0 0 40px rgba(255,255,255,0.35); }
   }
   .home-play-btn:hover {
     transform: scale(1.1) !important;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.3), 0 0 40px rgba(255,255,255,0.3);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3), 0 0 50px rgba(255,255,255,0.4), 0 0 80px rgba(118,75,162,0.3) !important;
   }
-  .home-play-btn:active { transform: scale(0.95) !important; }
+  .home-play-btn:active { transform: scale(0.95) !important; box-shadow: 0 2px 10px rgba(0,0,0,0.2) !important; }
   .home-coins {
     font-size: 16px;
     font-weight: 600;
     color: #ffd700;
-    text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+    animation: coinGlow 2s ease-in-out infinite;
   }
   .home-stats {
     font-size: 13px;
     font-weight: 500;
-    color: rgba(255,255,255,0.55);
+    color: rgba(255,255,255,0.65);
     letter-spacing: 0.5px;
   }
   .home-reset-btn {
@@ -155,13 +174,16 @@
     justify-content: center;
     align-items: center;
     gap: 14px;
-    background: linear-gradient(135deg, rgba(102,126,234,0.9), rgba(118,75,162,0.9));
+    background: linear-gradient(135deg, rgba(102,126,234,0.85), rgba(118,75,162,0.85));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-radius: 18px;
     opacity: 1;
-    transition: opacity 0.3s;
+    transition: opacity 0.4s, transform 0.4s;
   }
   #overlay.hidden {
     opacity: 0;
+    transform: scale(1.03);
     pointer-events: none;
   }
   #title {
@@ -175,12 +197,13 @@
     font-weight: 500;
     color: rgba(255,255,255,0.8);
     text-shadow: 1px 1px 0 rgba(0,0,0,0.1);
+    transition: opacity 0.3s;
   }
   #menuCoins {
     font-size: 16px;
     font-weight: 600;
     color: #ffd700;
-    text-shadow: 1px 1px 0 rgba(0,0,0,0.15);
+    animation: coinGlow 2s ease-in-out infinite;
   }
   #levelPicker {
     display: flex;
@@ -194,26 +217,31 @@
     font-size: 14px;
     font-weight: 600;
     padding: 8px 18px;
-    background: rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.1);
     color: rgba(255,255,255,0.8);
-    border: 2px solid rgba(255,255,255,0.2);
+    border: 2px solid rgba(255,255,255,0.15);
     cursor: pointer;
     letter-spacing: 1px;
     border-radius: 50px;
-    transition: all 0.2s;
+    transition: all 0.25s;
   }
   .levelBtn:hover {
     color: #fff;
-    background: rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.2);
     transform: scale(1.05);
   }
   .levelBtn.selected {
-    background: #fff;
-    color: #764ba2;
-    border-color: #fff;
     font-weight: 700;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    transform: scale(1.08);
   }
+  .levelBtn[data-level="easy"] { border-color: rgba(102,255,102,0.3); }
+  .levelBtn[data-level="easy"].selected { background: rgba(102,255,102,0.25); color: #66ff66; border-color: #66ff66; box-shadow: 0 0 15px rgba(102,255,102,0.3); }
+  .levelBtn[data-level="medium"] { border-color: rgba(255,204,68,0.3); }
+  .levelBtn[data-level="medium"].selected { background: rgba(255,204,68,0.25); color: #ffcc44; border-color: #ffcc44; box-shadow: 0 0 15px rgba(255,204,68,0.3); }
+  .levelBtn[data-level="hard"] { border-color: rgba(255,136,68,0.3); }
+  .levelBtn[data-level="hard"].selected { background: rgba(255,136,68,0.25); color: #ff8844; border-color: #ff8844; box-shadow: 0 0 15px rgba(255,136,68,0.3); }
+  .levelBtn[data-level="insane"] { border-color: rgba(255,68,102,0.3); }
+  .levelBtn[data-level="insane"].selected { background: rgba(255,68,102,0.25); color: #ff4466; border-color: #ff4466; box-shadow: 0 0 15px rgba(255,68,102,0.3); }
   #menuBtns {
     display: flex;
     gap: 12px;
@@ -233,6 +261,9 @@
     transition: transform 0.2s, box-shadow 0.2s;
     box-shadow: 0 4px 15px rgba(0,0,0,0.15);
   }
+  #startBtn {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15), 0 0 25px rgba(118,75,162,0.3);
+  }
   #mpBtn {
     background: linear-gradient(135deg, #00d2ff, #3a7bd5);
     color: #fff;
@@ -245,9 +276,17 @@
     font-size: 18px;
     padding: 12px 28px;
   }
-  #startBtn:hover, #mpBtn:hover, #shopBtn:hover {
+  #startBtn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 25px rgba(0,0,0,0.25), 0 0 40px rgba(118,75,162,0.4);
+  }
+  #mpBtn:hover {
     transform: translateY(-3px) scale(1.03);
-    box-shadow: 0 6px 25px rgba(0,0,0,0.25);
+    box-shadow: 0 6px 25px rgba(0,0,0,0.25), 0 0 30px rgba(0,210,255,0.3);
+  }
+  #shopBtn:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 6px 25px rgba(0,0,0,0.25), 0 0 30px rgba(255,215,0,0.3);
   }
   #startBtn:active, #mpBtn:active, #shopBtn:active { transform: translateY(0) scale(0.97); }
   #homeBtn {
@@ -284,13 +323,13 @@
     justify-content: center;
     align-items: center;
     gap: 14px;
-    background: rgba(26,16,64,0.8);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    background: rgba(26,16,64,0.65);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border-radius: 18px;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.2s;
+    transition: opacity 0.25s;
     z-index: 40;
   }
   #pauseOverlay.visible {
@@ -326,16 +365,20 @@
     inset: 0;
     display: flex;
     flex-direction: column;
-    background: linear-gradient(180deg, rgba(26,16,64,0.97), rgba(60,20,100,0.97));
+    background: linear-gradient(180deg, rgba(26,16,64,0.95), rgba(60,20,100,0.95));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-radius: 18px;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s;
+    transform: translateX(30px);
+    transition: opacity 0.35s, transform 0.35s;
     overflow: hidden;
   }
   #shopOverlay.visible {
     opacity: 1;
     pointer-events: auto;
+    transform: translateX(0);
   }
   .shop-header {
     display: flex;
@@ -388,6 +431,10 @@
     overflow-y: auto;
     flex: 1;
   }
+  @keyframes equippedPulse {
+    0%, 100% { box-shadow: 0 0 12px rgba(255,215,0,0.2); }
+    50% { box-shadow: 0 0 22px rgba(255,215,0,0.45); }
+  }
   .skin-card {
     display: flex;
     flex-direction: column;
@@ -397,19 +444,20 @@
     border: 2px solid rgba(255,255,255,0.1);
     border-radius: 14px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.25s;
     position: relative;
     background: rgba(255,255,255,0.03);
   }
   .skin-card:hover {
     border-color: rgba(255,255,255,0.3);
-    background: rgba(255,255,255,0.06);
-    transform: scale(1.03);
+    background: rgba(255,255,255,0.08);
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
   }
   .skin-card.equipped {
     border-color: #ffd700;
     background: rgba(255,215,0,0.08);
-    box-shadow: 0 0 15px rgba(255,215,0,0.15);
+    animation: equippedPulse 2s ease-in-out infinite;
   }
   .skin-swatch {
     width: 44px;
@@ -426,6 +474,7 @@
     font-size: 12px;
     font-weight: 600;
     color: #ffd700;
+    text-shadow: 0 0 6px rgba(255,215,0,0.3);
   }
   .skin-badge {
     font-size: 11px;
@@ -437,9 +486,14 @@
     color: rgba(255,255,255,0.4);
     background: rgba(255,255,255,0.05);
   }
+  @keyframes badgePulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
   .skin-badge.equipped-badge {
     color: #ffd700;
     background: rgba(255,215,0,0.1);
+    animation: badgePulse 2s ease-in-out infinite;
   }
   .shop-back {
     font-family: 'Fredoka', sans-serif;
@@ -497,11 +551,13 @@
     justify-content: center;
     align-items: center;
     background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     border-radius: 18px;
     z-index: 50;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.2s;
+    transition: opacity 0.25s;
   }
   #confirmModal.visible {
     opacity: 1;
@@ -518,6 +574,11 @@
     gap: 12px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.4);
     min-width: 220px;
+    transform: translateY(20px);
+    transition: transform 0.3s;
+  }
+  #confirmModal.visible .confirm-box {
+    transform: translateY(0);
   }
   .confirm-title {
     font-size: 18px;
@@ -658,7 +719,77 @@
     color: #764ba2;
     border-color: #fff;
     font-weight: 700;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15), 0 0 20px rgba(255,255,255,0.2);
+  }
+
+  /* ========== RADAR SPINNER ========== */
+  @keyframes radarPulse {
+    0% { transform: scale(0.3); opacity: 1; }
+    100% { transform: scale(2); opacity: 0; }
+  }
+  .mp-radar {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .mp-radar::before, .mp-radar::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 2px solid rgba(255,215,0,0.6);
+    border-radius: 50%;
+    animation: radarPulse 2s ease-out infinite;
+  }
+  .mp-radar::after {
+    animation-delay: 1s;
+  }
+  .mp-radar-dot {
+    width: 8px;
+    height: 8px;
+    background: #ffd700;
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(255,215,0,0.6);
+    z-index: 1;
+  }
+
+  /* ========== VICTORY ANIMATIONS ========== */
+  @keyframes victoryScale {
+    0% { transform: scale(0.5); opacity: 0; }
+    60% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes clutchPulse {
+    0%, 100% { text-shadow: 0 0 10px rgba(255,68,102,0.5); }
+    50% { text-shadow: 0 0 25px rgba(255,68,102,0.8); }
+  }
+  #title.victory-win {
+    animation: victoryScale 0.5s ease-out;
+  }
+  #title.victory-perfect {
+    background: linear-gradient(90deg, #ffd700, #fff, #ffd700);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: victoryScale 0.5s ease-out, shimmer 2s linear infinite;
+  }
+  #title.victory-clutch {
+    color: #ff4466;
+    animation: victoryScale 0.5s ease-out, clutchPulse 0.5s ease-in-out infinite;
+  }
+
+  /* ========== CANVAS GLOW ========== */
+  @keyframes canvasGlow {
+    0% { box-shadow: 0 0 30px rgba(100,50,255,0.2); }
+    30% { box-shadow: 0 0 50px rgba(100,50,255,0.5), 0 0 80px rgba(100,50,255,0.3); }
+    100% { box-shadow: 0 0 30px rgba(100,50,255,0.2); }
+  }
+  canvas.game-start {
+    animation: canvasGlow 1.5s ease-out;
   }
 
   /* ========== MOBILE RESPONSIVE ========== */
@@ -725,7 +856,9 @@
     justify-content: center;
     align-items: center;
     gap: 16px;
-    background: linear-gradient(135deg, rgba(58,123,213,0.95), rgba(0,210,255,0.85));
+    background: linear-gradient(135deg, rgba(58,123,213,0.9), rgba(0,210,255,0.8));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-radius: 18px;
     opacity: 0;
     pointer-events: none;
@@ -794,11 +927,16 @@
     box-shadow: 0 6px 20px rgba(0,0,0,0.2);
   }
   .mp-btn:active { transform: translateY(0) scale(0.97); }
+  @keyframes matchMeGlow {
+    0%, 100% { box-shadow: 0 0 20px rgba(255,215,0,0.3), 0 0 40px rgba(255,140,0,0.2); }
+    50% { box-shadow: 0 0 30px rgba(255,215,0,0.5), 0 0 60px rgba(255,140,0,0.3); }
+  }
   .mp-btn.matchme {
     background: linear-gradient(135deg, #ffd700, #ff8c00);
     color: #fff;
     font-size: 20px;
     padding: 14px 36px;
+    animation: matchMeGlow 2s ease-in-out infinite;
   }
   .mp-btn.secondary {
     background: rgba(255,255,255,0.15);
@@ -873,8 +1011,8 @@
     </div>
     <div id="menuBtns">
       <button id="startBtn">Start</button>
-      <button id="mpBtn">2 Player</button>
-      <button id="shopBtn">Shop</button>
+      <button id="mpBtn">&#9876; 2P</button>
+      <button id="shopBtn">&#9733; Shop</button>
     </div>
     <div id="controls">Mouse or W/S &bull; Space to pause</div>
     <button id="homeBtn">Home</button>
@@ -895,10 +1033,10 @@
       <span class="shop-coins" id="shopCoins"></span>
     </div>
     <div class="shop-tabs">
-      <button class="shop-tab active" data-tab="bg">Background</button>
-      <button class="shop-tab" data-tab="paddle">Paddle</button>
-      <button class="shop-tab" data-tab="ball">Ball</button>
-      <button class="shop-tab" data-tab="audio">Audio</button>
+      <button class="shop-tab active" data-tab="bg">&#9670; BG</button>
+      <button class="shop-tab" data-tab="paddle">&#9646; Paddle</button>
+      <button class="shop-tab" data-tab="ball">&#9679; Ball</button>
+      <button class="shop-tab" data-tab="audio">&#9835; Audio</button>
     </div>
     <div class="shop-grid" id="shopGrid"></div>
     <button class="shop-back" id="shopBackBtn">Back</button>
@@ -926,7 +1064,7 @@
     </div>
     <div class="mp-lobby" id="mpMatchPanel" style="display:none">
       <div class="mp-status" id="mpMatchStatus">Searching for opponent...</div>
-      <div class="mp-match-spinner" style="width:40px;height:40px;border:4px solid rgba(255,255,255,0.2);border-top-color:#ffd700;border-radius:50%;animation:spin 0.8s linear infinite"></div>
+      <div class="mp-radar"><div class="mp-radar-dot"></div></div>
     </div>
     <div class="mp-lobby" id="mpLobby" style="display:none">
       <div class="mp-label">Share this code:</div>
@@ -1007,6 +1145,8 @@ let gameOver = false;
 let keys = {};
 let particles = [];
 let scoreFlash = { left: 0, right: 0 };
+let impactRings = [];
+let powerupFlash = 0;
 
 // --- Coin state ---
 let coins = [];
@@ -1435,6 +1575,8 @@ function initGame() {
   scores = { player: 0, ai: 0 };
   particles = [];
   scoreFlash = { left: 0, right: 0 };
+  impactRings = [];
+  powerupFlash = 0;
   coins = [];
   coinTimer = Date.now();
   nextCoinSpawn = COIN_SPAWN_MIN + Math.random() * (COIN_SPAWN_MAX - COIN_SPAWN_MIN);
@@ -1491,8 +1633,12 @@ function drawParticles() {
 }
 
 function drawNet() {
-  ctx.fillStyle = 'rgba(255,255,255,0.08)';
+  ctx.save();
+  ctx.shadowColor = getBallColor();
+  ctx.shadowBlur = 6;
+  ctx.fillStyle = 'rgba(255,255,255,0.1)';
   for (let y = 8; y < H; y += 20) ctx.fillRect(W/2 - 1, y, 2, 10);
+  ctx.restore();
 }
 
 function drawScores() {
@@ -1580,13 +1726,26 @@ function isLightBackground() {
 
 function drawBallTrail() {
   const trail = ball.trail, bc = getBallColor();
+  if (trail.length < 2) return;
   const speedRange = lv().ballMax - lv().ballSpeed;
   const speedRatio = speedRange > 0 ? clamp((ball.speed - lv().ballSpeed) / speedRange, 0, 1) : 0;
-  const trailAlpha = 0.15 + speedRatio * 0.25;
-  for (let i = 0; i < trail.length; i++) {
+  const trailAlpha = 0.2 + speedRatio * 0.3;
+  for (let i = 1; i < trail.length; i++) {
     const t = i / trail.length;
-    ctx.globalAlpha = t * trailAlpha; ctx.fillStyle = bc;
-    ctx.beginPath(); ctx.arc(trail[i].x, trail[i].y, BALL_R*t, 0, Math.PI*2); ctx.fill();
+    const width = BALL_R * 2 * t;
+    const prev = trail[i-1], curr = trail[i];
+    const dx = curr.x - prev.x, dy = curr.y - prev.y;
+    const len = Math.sqrt(dx*dx + dy*dy) || 1;
+    const nx = -dy/len * width/2, ny = dx/len * width/2;
+    ctx.globalAlpha = t * trailAlpha;
+    ctx.fillStyle = bc;
+    ctx.beginPath();
+    ctx.moveTo(prev.x + nx, prev.y + ny);
+    ctx.lineTo(curr.x + nx, curr.y + ny);
+    ctx.lineTo(curr.x - nx, curr.y - ny);
+    ctx.lineTo(prev.x - nx, prev.y - ny);
+    ctx.closePath();
+    ctx.fill();
   }
   ctx.globalAlpha = 1;
 }
@@ -1599,7 +1758,7 @@ function drawPaddle(p, isPlayer) {
     ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
   } else {
     ctx.shadowColor = isPlayer ? getPaddleGlowColor() : 'rgba(255,255,255,0.4)';
-    ctx.shadowBlur = 12;
+    ctx.shadowBlur = 16;
   }
   ctx.beginPath();
   ctx.moveTo(p.x+r, p.y);
@@ -1760,6 +1919,7 @@ function activatePowerup(type) {
   deactivatePowerup();
   const pType = POWERUP_TYPES[type];
   activePowerup = { type, startTime: Date.now(), duration: pType.duration };
+  powerupFlash = 1;
   if (type === 'big_paddle') {
     originalPaddleH = player.h;
     player.h = Math.round(player.h * 1.5);
@@ -2072,6 +2232,16 @@ function drawCountdown() {
   const scale = 1 + (1 - stepProgress) * 0.5;
   const alpha = 1 - stepProgress * 0.3;
   ctx.save();
+  // Ring expansion behind number
+  const ringRadius = 30 + stepProgress * 60;
+  const ringAlpha = (1 - stepProgress) * 0.3;
+  ctx.globalAlpha = ringAlpha;
+  ctx.strokeStyle = text === 'GO!' ? '#66ff66' : '#fff';
+  ctx.lineWidth = 3 * (1 - stepProgress);
+  ctx.beginPath();
+  ctx.arc(W / 2, H / 2, ringRadius, 0, Math.PI * 2);
+  ctx.stroke();
+  // Text
   ctx.globalAlpha = alpha;
   ctx.font = `bold ${Math.round(72 * scale)}px 'Fredoka', sans-serif`;
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
@@ -2180,19 +2350,54 @@ function drawRallyCounter() {
   const alpha = rallyCount >= 5 ? 0.7 + 0.15 * Math.sin(Date.now() / 200) : Math.min(0.15 + rallyCount * 0.05, 0.5);
   ctx.save();
   ctx.globalAlpha = alpha;
-  ctx.font = `bold ${rallyCount >= 5 ? 20 : 16}px 'Fredoka', sans-serif`;
+  const fontSize = rallyCount >= 10 ? 24 : rallyCount >= 5 ? 20 : 16;
+  ctx.font = `bold ${fontSize}px 'Fredoka', sans-serif`;
   ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-  ctx.fillStyle = '#fff';
+  let color = '#fff', glowColor = '#fff';
+  if (rallyCount >= 20) { color = '#ff3333'; glowColor = '#ff3333'; }
+  else if (rallyCount >= 15) { color = '#ff6622'; glowColor = '#ff6622'; }
+  else if (rallyCount >= 10) { color = '#ffaa00'; glowColor = '#ffaa00'; }
+  else if (rallyCount >= 5) { color = '#ffdd44'; glowColor = '#ffdd44'; }
+  ctx.fillStyle = color;
   if (rallyCount >= 5) {
-    ctx.shadowColor = '#fff'; ctx.shadowBlur = 10;
+    ctx.shadowColor = glowColor; ctx.shadowBlur = 12;
   }
   ctx.fillText(`Rally: ${rallyCount}`, W / 2, 40);
   ctx.shadowBlur = 0;
   ctx.restore();
 }
 
+function drawImpactRings() {
+  for (let i = impactRings.length - 1; i >= 0; i--) {
+    const r = impactRings[i];
+    r.radius += 2;
+    r.life -= 0.06;
+    if (r.life <= 0) { impactRings.splice(i, 1); continue; }
+    ctx.save();
+    ctx.globalAlpha = r.life * 0.5;
+    ctx.strokeStyle = r.color;
+    ctx.lineWidth = 2 * r.life;
+    ctx.beginPath();
+    ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
 function draw() {
-  drawBackground(); drawNet(); drawScores(); drawParticles();
+  drawBackground();
+  // Score flash overlays
+  if (scoreFlash.left > 0.05) {
+    ctx.save(); ctx.globalAlpha = scoreFlash.left * 0.12;
+    ctx.fillStyle = '#66ff66'; ctx.fillRect(0, 0, W/2, H);
+    ctx.restore();
+  }
+  if (scoreFlash.right > 0.05) {
+    ctx.save(); ctx.globalAlpha = scoreFlash.right * 0.12;
+    ctx.fillStyle = '#ff6666'; ctx.fillRect(W/2, 0, W/2, H);
+    ctx.restore();
+  }
+  drawNet(); drawScores(); drawParticles(); drawImpactRings();
   drawCoins(); drawPowerups(); drawFloatingTexts(); drawBallTrail();
   drawShield();
   drawPaddle(player, true); drawPaddle(ai, false);
@@ -2201,13 +2406,16 @@ function draw() {
   const speedRange = lv().ballMax - lv().ballSpeed;
   const speedRatio = speedRange > 0 ? clamp((ball.speed - lv().ballSpeed) / speedRange, 0, 1) : 0;
   if (speedRatio > 0.2 && running && !paused) {
-    const lineCount = Math.floor(speedRatio * 5) + 1;
+    ctx.save();
+    const lineCount = Math.floor(speedRatio * 6) + 1;
     const angle = Math.atan2(ball.vy, ball.vx);
-    ctx.strokeStyle = `rgba(255,255,255,${speedRatio * 0.15})`;
-    ctx.lineWidth = 1.5;
+    ctx.shadowColor = 'rgba(255,255,255,0.3)';
+    ctx.shadowBlur = 3 + speedRatio * 4;
+    ctx.strokeStyle = `rgba(255,255,255,${speedRatio * 0.2})`;
+    ctx.lineWidth = 1.5 + speedRatio;
     for (let i = 0; i < lineCount; i++) {
       const offset = (i - lineCount/2) * 4;
-      const len = 8 + speedRatio * 16;
+      const len = 10 + speedRatio * 20;
       const sx = ball.x - Math.cos(angle) * (BALL_R + 2 + Math.random() * 4);
       const sy = ball.y - Math.sin(angle) * (BALL_R + 2) + offset;
       ctx.beginPath();
@@ -2215,6 +2423,7 @@ function draw() {
       ctx.lineTo(sx - Math.cos(angle) * len, sy - Math.sin(angle) * len);
       ctx.stroke();
     }
+    ctx.restore();
   }
   // Ball with dynamic glow
   if (isLightBackground()) {
@@ -2226,6 +2435,13 @@ function draw() {
   ctx.beginPath(); ctx.arc(ball.x, ball.y, BALL_R, 0, Math.PI*2); ctx.fill();
   ctx.shadowBlur = 0;
   drawCoinHUD(); drawPowerupHUD(); drawRallyCounter();
+  // Powerup activation flash
+  if (powerupFlash > 0) {
+    ctx.save(); ctx.globalAlpha = powerupFlash * 0.15;
+    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
+    ctx.restore();
+    powerupFlash = Math.max(0, powerupFlash - 0.08);
+  }
   drawConfetti(); drawGoldenFlash(); drawLoseVignette();
   drawCountdown();
 }
@@ -2244,7 +2460,16 @@ function handlePaddleHit(paddle, direction) {
   ball.speed = Math.min(ball.speed+0.25, effectiveMax);
   ball.vx = Math.cos(angle)*ball.speed*direction;
   ball.vy = Math.sin(angle)*ball.speed;
-  spawnParticles(ball.x, ball.y, 8, getPaddleColor()||'#fff');
+  const hitColor = getPaddleColor()||'#fff';
+  spawnParticles(ball.x, ball.y, 8, hitColor);
+  // Directional burst + impact ring
+  const burstAngle = direction > 0 ? 0 : Math.PI;
+  for (let i = 0; i < 4; i++) {
+    const a = burstAngle + (Math.random() - 0.5) * 1.2;
+    const spd = Math.random() * 3 + 2;
+    particles.push({ x: ball.x, y: ball.y, vx: Math.cos(a)*spd, vy: Math.sin(a)*spd, life: 1, decay: 0.04, size: Math.random()*2+1, color: hitColor });
+  }
+  impactRings.push({ x: ball.x, y: ball.y, radius: BALL_R, life: 1, color: hitColor });
   rallyCount++;
   hitFreeze = 3;
   // Rally coin bonuses (single-player only)
@@ -2391,6 +2616,10 @@ function endGame(text) {
   endGameAnimating = true;
   requestAnimationFrame(endGameAnimation);
   titleEl.textContent = title;
+  titleEl.className = '';
+  if (title === 'Perfect!') titleEl.className = 'victory-perfect';
+  else if (title === 'Clutch Win!') titleEl.className = 'victory-clutch';
+  else if (isWin) titleEl.className = 'victory-win';
   if (mpMode && conn && conn.open) {
     startBtn.textContent = 'Rematch';
     mpRematchPending = true;
@@ -2418,7 +2647,11 @@ function togglePause() {
 function selectLevel(level) {
   currentLevel = level;
   levelBtns.forEach(btn => btn.classList.toggle('selected', btn.dataset.level === level));
-  subtitle.textContent = `First to ${lv().winScore} wins`;
+  subtitle.style.opacity = '0';
+  setTimeout(() => {
+    subtitle.textContent = `First to ${lv().winScore} wins`;
+    subtitle.style.opacity = '1';
+  }, 150);
 }
 
 function updateMenuCoins() {
@@ -2426,7 +2659,7 @@ function updateMenuCoins() {
   menuCoinsEl.textContent = txt;
   homeCoinsEl.textContent = txt;
   if (stats.wins || stats.losses || stats.bestRally) {
-    homeStatsEl.textContent = `W: ${stats.wins} · L: ${stats.losses} · Best Rally: ${stats.bestRally}`;
+    homeStatsEl.textContent = `\u265B ${stats.wins}  \u2716 ${stats.losses}  \u26A1 ${stats.bestRally}`;
   } else {
     homeStatsEl.textContent = '';
   }
@@ -2466,6 +2699,9 @@ function start() {
   levelIndicator.textContent = lv().label;
   levelIndicator.style.color = 'rgba(255,255,255,0.25)';
   running = true; gameOver = false;
+  titleEl.className = '';
+  canvas.classList.add('game-start');
+  setTimeout(() => canvas.classList.remove('game-start'), 1500);
   startMusic();
   // Freeze ball and start countdown
   const svx = ball.vx, svy = ball.vy;
@@ -2546,7 +2782,7 @@ function renderSkinSection(category, headerText) {
     } else {
       const priceEl = document.createElement('div');
       priceEl.className = 'skin-price';
-      priceEl.textContent = skin.price === 0 ? 'Free' : `${skin.price} coins`;
+      priceEl.textContent = skin.price === 0 ? 'Free' : `\u25C9 ${skin.price}`;
       card.appendChild(priceEl);
     }
     card.addEventListener('click', () => handleSkinClick(skin));
@@ -2846,6 +3082,9 @@ function startMultiplayer() {
   levelIndicator.textContent = lv().label + ' (2P · No powerups)';
   levelIndicator.style.color = 'rgba(255,255,255,0.25)';
   running = true; gameOver = false;
+  titleEl.className = '';
+  canvas.classList.add('game-start');
+  setTimeout(() => canvas.classList.remove('game-start'), 1500);
   startMusic();
 
   if (isHost) {
@@ -2914,6 +3153,7 @@ function handleMpDisconnect() {
     fadeOutAndStopMusic(200);
     pauseOverlay.classList.remove('visible');
     titleEl.textContent = 'Disconnected';
+    titleEl.className = '';
     subtitle.textContent = 'Opponent left the game';
     startBtn.textContent = 'Back to Menu';
     overlay.classList.remove('hidden');
@@ -3066,6 +3306,7 @@ function quitToMenu() {
     cleanupMultiplayer();
     pauseOverlay.classList.remove('visible');
     titleEl.textContent = 'Ping Pong Madness';
+    titleEl.className = '';
     subtitle.textContent = `First to ${lv().winScore} wins`;
     startBtn.textContent = 'Start';
     levelIndicator.textContent = '';
