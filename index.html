@@ -811,6 +811,19 @@
     animation: victoryScale 0.5s ease-out, clutchPulse 0.5s ease-in-out infinite;
   }
 
+  /* ========== DEFEAT ANIMATIONS ========== */
+  #title.defeat-destroyed {
+    color: #ff3333;
+    animation: victoryScale 0.5s ease-out, clutchPulse 0.5s ease-in-out infinite;
+  }
+  #title.defeat-close {
+    color: #ff8844;
+    animation: victoryScale 0.5s ease-out;
+  }
+  #title.defeat-lose {
+    animation: victoryScale 0.5s ease-out;
+  }
+
   /* ========== CANVAS GLOW ========== */
   @keyframes canvasGlow {
     0% { box-shadow: 0 0 30px rgba(100,50,255,0.2); }
@@ -909,6 +922,24 @@
     text-shadow: 0 0 20px rgba(255,215,0,0.4);
     font-family: 'Fredoka', monospace;
   }
+  .mp-copy-btn {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 6px 20px;
+    background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,140,0,0.2));
+    color: #ffd700;
+    border: 1.5px solid rgba(255,215,0,0.4);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+  .mp-copy-btn:hover {
+    background: linear-gradient(135deg, rgba(255,215,0,0.35), rgba(255,140,0,0.35));
+    transform: translateY(-1px);
+  }
+  .mp-copy-btn:active { transform: translateY(0) scale(0.96); }
   .mp-status {
     font-size: 14px;
     color: rgba(255,255,255,0.8);
@@ -1009,6 +1040,244 @@
     pointer-events: none;
     letter-spacing: 0.5px;
   }
+
+  /* ========== HOME BOTTOM BUTTONS ========== */
+  .home-bottom-btns {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .home-secondary-btn {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 18px;
+    background: rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.85);
+    border: 1.5px solid rgba(255,255,255,0.25);
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+  .home-secondary-btn:hover {
+    background: rgba(255,255,255,0.25);
+    transform: translateY(-1px);
+  }
+  .home-secondary-btn:active { transform: scale(0.96); }
+
+  /* ========== TUTORIAL OVERLAY ========== */
+  #tutorialOverlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, rgba(30,15,60,0.97), rgba(60,30,100,0.97));
+    border-radius: 18px;
+    z-index: 45;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s;
+  }
+  #tutorialOverlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .tut-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    max-width: 380px;
+    width: 90%;
+    padding: 28px 24px 20px;
+  }
+  .tut-step-dots {
+    display: flex;
+    gap: 8px;
+  }
+  .tut-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    transition: all 0.3s;
+  }
+  .tut-dot.active {
+    background: #ffd700;
+    box-shadow: 0 0 8px rgba(255,215,0,0.5);
+    transform: scale(1.3);
+  }
+  .tut-dot.done {
+    background: rgba(255,215,0,0.5);
+  }
+  .tut-content {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    min-height: 200px;
+    justify-content: center;
+  }
+  .tut-icon {
+    font-size: 48px;
+    line-height: 1;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+  }
+  .tut-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 1px;
+  }
+  .tut-desc {
+    font-size: 15px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.5;
+  }
+  .tut-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+    margin-top: 4px;
+  }
+  .tut-detail-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 10px 8px;
+    text-align: center;
+  }
+  .tut-detail-card .label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+  }
+  .tut-detail-card .info {
+    font-size: 11px;
+    color: rgba(255,255,255,0.6);
+  }
+  .tut-powerup-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+  }
+  .tut-powerup-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    padding: 7px 12px;
+  }
+  .tut-powerup-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .tut-powerup-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    min-width: 80px;
+    text-align: left;
+  }
+  .tut-powerup-info {
+    font-size: 11px;
+    color: rgba(255,255,255,0.6);
+    text-align: left;
+  }
+  .tut-keys {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 2px;
+  }
+  .tut-key {
+    background: rgba(255,255,255,0.1);
+    border: 1.5px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.9);
+    letter-spacing: 0.5px;
+  }
+  .tut-nav {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    justify-content: center;
+  }
+  .tut-btn {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 10px 32px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+  .tut-btn.primary {
+    background: #fff;
+    color: #764ba2;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  }
+  .tut-btn.primary:hover { transform: translateY(-2px) scale(1.03); }
+  .tut-btn.secondary {
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.7);
+    border: 1.5px solid rgba(255,255,255,0.15);
+  }
+  .tut-btn.secondary:hover { background: rgba(255,255,255,0.18); }
+  .tut-btn:active { transform: scale(0.96) !important; }
+  .tut-skip {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.35);
+    cursor: pointer;
+    padding: 4px 12px;
+    transition: color 0.2s;
+    letter-spacing: 0.5px;
+  }
+  .tut-skip:hover { color: rgba(255,255,255,0.6); }
+
+  @media (max-width: 600px) {
+    .tut-card { padding: 20px 16px 14px; gap: 12px; }
+    .tut-icon { font-size: 36px; }
+    .tut-title { font-size: 22px; }
+    .tut-desc { font-size: 13px; }
+    .tut-content { min-height: 170px; }
+    .tut-btn { font-size: 14px; padding: 8px 24px; }
+    .tut-detail-card .label { font-size: 11px; }
+    .tut-detail-card .info { font-size: 10px; }
+    .tut-powerup-name { font-size: 12px; min-width: 70px; }
+    .tut-powerup-info { font-size: 10px; }
+    .home-secondary-btn { font-size: 12px; padding: 5px 14px; }
+  }
+  @media (max-height: 420px) {
+    .tut-card { padding: 12px 14px 10px; gap: 8px; }
+    .tut-icon { font-size: 28px; }
+    .tut-title { font-size: 18px; }
+    .tut-desc { font-size: 12px; }
+    .tut-content { min-height: 120px; gap: 6px; }
+    .tut-btn { font-size: 13px; padding: 7px 20px; }
+    .tut-detail-grid { gap: 4px; }
+    .tut-powerup-row { padding: 4px 8px; }
+  }
 </style>
 </head>
 <body>
@@ -1024,7 +1293,23 @@
     <div class="home-coins" id="homeCoins"></div>
     <div class="home-stats" id="homeStats"></div>
     <button class="home-play-btn" id="homePlayBtn">Play!</button>
-    <button class="home-reset-btn" id="homeResetBtn">Reset Progress</button>
+    <div class="home-bottom-btns">
+      <button class="home-secondary-btn" id="homeTutorialBtn">How to Play</button>
+      <button class="home-reset-btn" id="homeResetBtn">Reset Progress</button>
+    </div>
+  </div>
+
+  <!-- TUTORIAL OVERLAY -->
+  <div id="tutorialOverlay">
+    <div class="tut-card">
+      <div class="tut-step-dots" id="tutDots"></div>
+      <div class="tut-content" id="tutContent"></div>
+      <div class="tut-nav">
+        <button class="tut-btn secondary" id="tutPrev">Back</button>
+        <button class="tut-btn primary" id="tutNext">Next</button>
+      </div>
+      <button class="tut-skip" id="tutSkip">Skip</button>
+    </div>
   </div>
 
   <!-- GAME MENU -->
@@ -1098,6 +1383,7 @@
     <div class="mp-lobby" id="mpLobby" style="display:none">
       <div class="mp-label">Share this code:</div>
       <div class="mp-code" id="mpCodeDisplay"></div>
+      <button class="mp-copy-btn" id="mpCopyBtn">Copy Code</button>
       <div class="mp-status" id="mpHostStatus">Creating game...</div>
     </div>
     <div class="mp-join" id="mpJoinPanel" style="display:none">
@@ -1145,6 +1431,7 @@ const mpJoinShowBtn = document.getElementById('mpJoinShowBtn');
 const mpConnectBtn = document.getElementById('mpConnectBtn');
 const mpCodeInput = document.getElementById('mpCodeInput');
 const mpBackBtn = document.getElementById('mpBackBtn');
+const mpCopyBtn = document.getElementById('mpCopyBtn');
 const mpMatchMeBtn = document.getElementById('mpMatchMeBtn');
 let matchPollTimer = null;
 const isTouchDevice = matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window || navigator.maxTouchPoints > 0;
@@ -1334,6 +1621,7 @@ const SFX_PARAMS = {
     coin:  { freq: 880, freqEnd: 1760, wave: 'sine', dur: 0.12, vol: 0.1 },
     buy:   { freq: 523, freqEnd: 1047, wave: 'sine', dur: 0.2, vol: 0.1 },
     powerup: { freq: 200, freqEnd: 400, wave: 'sine', dur: 0.15, vol: 0.12 },
+    powerup_end: { freq: 400, freqEnd: 200, wave: 'sine', dur: 0.15, vol: 0.10 },
     countdown_tick: { freq: 262, wave: 'sine', dur: 0.1, vol: 0.1 },
     countdown_go: [
       { freq: 330, wave: 'sine', dur: 0.1, vol: 0.12, delay: 0 },
@@ -1359,6 +1647,7 @@ const SFX_PARAMS = {
     coin:  { freq: 600, freqEnd: 1200, wave: 'square', dur: 0.08, vol: 0.1 },
     buy:   { freq: 440, freqEnd: 880, wave: 'square', dur: 0.2, vol: 0.1 },
     powerup: { freq: 150, freqEnd: 300, wave: 'square', dur: 0.12, vol: 0.1 },
+    powerup_end: { freq: 300, freqEnd: 150, wave: 'square', dur: 0.12, vol: 0.08 },
     countdown_tick: { freq: 200, wave: 'square', dur: 0.08, vol: 0.08 },
     countdown_go: [
       { freq: 300, wave: 'square', dur: 0.08, vol: 0.1, delay: 0 },
@@ -1384,6 +1673,7 @@ const SFX_PARAMS = {
     coin:  { freq: 1047, freqEnd: 2093, wave: 'sine', dur: 0.1, vol: 0.08 },
     buy:   { freq: 660, freqEnd: 1320, wave: 'sawtooth', dur: 0.18, vol: 0.08 },
     powerup: { freq: 220, freqEnd: 440, wave: 'sawtooth', dur: 0.15, vol: 0.08 },
+    powerup_end: { freq: 440, freqEnd: 220, wave: 'sawtooth', dur: 0.15, vol: 0.06 },
     countdown_tick: { freq: 330, wave: 'triangle', dur: 0.08, vol: 0.07 },
     countdown_go: [
       { freq: 440, wave: 'sawtooth', dur: 0.1, vol: 0.08, delay: 0 },
@@ -1409,6 +1699,7 @@ const SFX_PARAMS = {
     coin:  { freq: 220, freqEnd: 440, wave: 'sine', dur: 0.15, vol: 0.1 },
     buy:   { freq: 165, freqEnd: 330, wave: 'triangle', dur: 0.25, vol: 0.12 },
     powerup: { freq: 100, freqEnd: 200, wave: 'triangle', dur: 0.18, vol: 0.12 },
+    powerup_end: { freq: 200, freqEnd: 100, wave: 'triangle', dur: 0.18, vol: 0.10 },
     countdown_tick: { freq: 165, wave: 'sine', dur: 0.12, vol: 0.1 },
     countdown_go: [
       { freq: 196, wave: 'sine', dur: 0.12, vol: 0.12, delay: 0 },
@@ -1992,6 +2283,12 @@ function deactivatePowerup() {
     ball.vx = Math.cos(angle) * ball.speed;
     ball.vy = Math.sin(angle) * ball.speed;
   }
+  if (type !== 'shield' && type !== 'multi_ball') {
+    const pType = POWERUP_TYPES[type];
+    playSound('powerup_end');
+    floatingTexts.push({ x: W/2, y: H - 22, text: pType.name + ' ended', life: 1.2, vy: -1.5, color: pType.color });
+    spawnParticles(W/2, H - 22, 8, pType.color);
+  }
   if (type === 'multi_ball') cloneBall = null;
   if (type === 'shield') shieldActive = false;
   activePowerup = null;
@@ -2116,11 +2413,12 @@ function drawCloneBall() {
   const bc = getBallColor();
   for (let i = 0; i < cloneBall.trail.length; i++) {
     const t = i / cloneBall.trail.length;
-    ctx.globalAlpha = t * 0.1; ctx.fillStyle = bc;
+    ctx.globalAlpha = t * 0.18; ctx.fillStyle = bc;
     ctx.beginPath(); ctx.arc(cloneBall.trail[i].x, cloneBall.trail[i].y, BALL_R * t, 0, Math.PI * 2); ctx.fill();
   }
-  ctx.globalAlpha = 0.4;
-  ctx.shadowColor = getBallGlow(); ctx.shadowBlur = 10;
+  ctx.globalAlpha = 0.75;
+  const cloneSpeedRatio = cloneBall.speed ? clamp((cloneBall.speed - 2) / 6, 0, 1) : 0;
+  ctx.shadowColor = getBallGlow(); ctx.shadowBlur = 8 + cloneSpeedRatio * 16;
   ctx.fillStyle = bc;
   ctx.beginPath(); ctx.arc(cloneBall.x, cloneBall.y, BALL_R, 0, Math.PI * 2); ctx.fill();
   ctx.shadowBlur = 0; ctx.globalAlpha = 1;
@@ -2466,10 +2764,10 @@ function draw() {
   drawCoinHUD(); drawPowerupHUD(); drawRallyCounter();
   // Powerup activation flash
   if (powerupFlash > 0) {
-    ctx.save(); ctx.globalAlpha = powerupFlash * 0.15;
-    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
+    ctx.save(); ctx.globalAlpha = powerupFlash * 0.35;
+    ctx.fillStyle = activePowerup ? POWERUP_TYPES[activePowerup.type].color : '#fff'; ctx.fillRect(0, 0, W, H);
     ctx.restore();
-    powerupFlash = Math.max(0, powerupFlash - 0.08);
+    powerupFlash = Math.max(0, powerupFlash - 0.06);
   }
   drawConfetti(); drawGoldenFlash(); drawLoseVignette();
   drawCountdown();
@@ -2545,8 +2843,10 @@ function update() {
     ball.vx = Math.abs(ball.vx);
     shieldActive = false;
     if (activePowerup && activePowerup.type === 'shield') activePowerup = null;
-    spawnParticles(14, ball.y, 10, '#4488ff');
-    playSound('wall');
+    spawnParticles(14, ball.y, 18, '#4488ff');
+    impactRings.push({ x: 14, y: ball.y, radius: BALL_R, life: 1, color: '#4488ff' });
+    triggerScreenShake();
+    playSound('hit');
   }
 
   if (ball.vx < 0 && collides(player)) { ball.x = player.x+player.w+BALL_R; handlePaddleHit(player,1); lastHitter='player'; playSound('hit'); }
@@ -2649,6 +2949,9 @@ function endGame(text) {
   if (title === 'Perfect!') titleEl.className = 'victory-perfect';
   else if (title === 'Clutch Win!') titleEl.className = 'victory-clutch';
   else if (isWin) titleEl.className = 'victory-win';
+  else if (title === 'Destroyed!') titleEl.className = 'defeat-destroyed';
+  else if (title === 'So Close!') titleEl.className = 'defeat-close';
+  else titleEl.className = 'defeat-lose';
   if (mpMode && conn && conn.open) {
     startBtn.textContent = 'Rematch';
     mpRematchPending = true;
@@ -2716,6 +3019,143 @@ function goHome() {
   homeScreen.classList.remove('hidden');
   updateMenuCoins();
 }
+
+// ========== TUTORIAL ==========
+const tutorialOverlay = document.getElementById('tutorialOverlay');
+const tutDots = document.getElementById('tutDots');
+const tutContent = document.getElementById('tutContent');
+const tutPrev = document.getElementById('tutPrev');
+const tutNext = document.getElementById('tutNext');
+const tutSkip = document.getElementById('tutSkip');
+let tutStep = 0;
+
+const TUTORIAL_STEPS = [
+  {
+    icon: '\u{1F3D3}',
+    title: 'Welcome!',
+    desc: 'Learn the basics of Ping Pong Madness in a few quick steps.',
+    extra: ''
+  },
+  {
+    icon: '\u{1F3AE}',
+    title: 'Controls',
+    desc: 'Move your paddle up and down to hit the ball past the AI opponent.',
+    extra() {
+      const isMobile = matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
+      let html = '<div class="tut-keys">';
+      if (isMobile) {
+        html += '<span class="tut-key">Drag to move</span>';
+        html += '<span class="tut-key">Double-tap to pause</span>';
+      } else {
+        html += '<span class="tut-key">W / \u2191</span><span class="tut-key">S / \u2193</span>';
+        html += '<span class="tut-key">Mouse</span>';
+        html += '<span class="tut-key">Space = Pause</span>';
+      }
+      html += '</div>';
+      return html;
+    }
+  },
+  {
+    icon: '\u{1F4CA}',
+    title: 'Difficulty',
+    desc: 'Choose your challenge level before each game.',
+    extra: `<div class="tut-detail-grid">
+      <div class="tut-detail-card"><div class="label" style="color:#66ff66">Easy</div><div class="info">Slow ball, first to 5</div></div>
+      <div class="tut-detail-card"><div class="label" style="color:#ffcc44">Medium</div><div class="info">Balanced, first to 7</div></div>
+      <div class="tut-detail-card"><div class="label" style="color:#ff8844">Hard</div><div class="info">Fast ball, first to 10</div></div>
+      <div class="tut-detail-card"><div class="label" style="color:#ff4466">Insane</div><div class="info">Brutal AI, first to 15</div></div>
+    </div>`
+  },
+  {
+    icon: '\u26A1',
+    title: 'Power-ups',
+    desc: 'Glowing orbs appear during play. Hit the ball through them to activate!',
+    extra: `<div class="tut-powerup-list">
+      <div class="tut-powerup-row"><div class="tut-powerup-dot" style="background:#00ff88;box-shadow:0 0 6px #00ff88"></div><span class="tut-powerup-name">Big Paddle</span><span class="tut-powerup-info">Grow your paddle for 8s</span></div>
+      <div class="tut-powerup-row"><div class="tut-powerup-dot" style="background:#00ccff;box-shadow:0 0 6px #00ccff"></div><span class="tut-powerup-name">Slow-Mo</span><span class="tut-powerup-info">Slows the ball for 6s</span></div>
+      <div class="tut-powerup-row"><div class="tut-powerup-dot" style="background:#ff4400;box-shadow:0 0 6px #ff4400"></div><span class="tut-powerup-name">Speed Boost</span><span class="tut-powerup-info">Faster ball for 6s</span></div>
+      <div class="tut-powerup-row"><div class="tut-powerup-dot" style="background:#ff66ff;box-shadow:0 0 6px #ff66ff"></div><span class="tut-powerup-name">Multi-Ball</span><span class="tut-powerup-info">Adds a clone ball for 8s</span></div>
+      <div class="tut-powerup-row"><div class="tut-powerup-dot" style="background:#4488ff;box-shadow:0 0 6px #4488ff"></div><span class="tut-powerup-name">Shield</span><span class="tut-powerup-info">Blocks one goal, lasts until hit</span></div>
+    </div>`
+  },
+  {
+    icon: '\u{1FA99}',
+    title: 'Coins & Shop',
+    desc: 'Collect coins during games and earn bonus coins for long rallies and wins. Spend them in the shop on new backgrounds, paddles, balls, and sounds!',
+    extra: `<div class="tut-detail-grid">
+      <div class="tut-detail-card"><div class="label" style="color:#ffd700">Coin Pickups</div><div class="info">Grab them mid-rally</div></div>
+      <div class="tut-detail-card"><div class="label" style="color:#ffd700">Rally Bonus</div><div class="info">10+ hits = bonus coins</div></div>
+      <div class="tut-detail-card"><div class="label" style="color:#ffd700">Win Bonus</div><div class="info">+10 coins per victory</div></div>
+      <div class="tut-detail-card"><div class="label" style="color:#ffd700">Shop</div><div class="info">Customize everything</div></div>
+    </div>`
+  },
+  {
+    icon: '\u{1F91D}',
+    title: 'Multiplayer',
+    desc: 'Play against a friend! Use Match Me for instant pairing, or create a private game and share the 4-letter code.',
+    extra: `<div class="tut-detail-grid">
+      <div class="tut-detail-card"><div class="label" style="color:#00d2ff">Match Me</div><div class="info">Find a random opponent</div></div>
+      <div class="tut-detail-card"><div class="label" style="color:#00d2ff">Private Game</div><div class="info">Share a code with a friend</div></div>
+    </div>`
+  },
+  {
+    icon: '\u{1F4A1}',
+    title: 'Tips',
+    desc: 'You\'re ready to play! A few pro tips to get you started:',
+    extra: `<div class="tut-powerup-list">
+      <div class="tut-powerup-row"><span class="tut-powerup-info" style="color:rgba(255,255,255,0.8)">Angle your shots by hitting the ball with the edge of your paddle</span></div>
+      <div class="tut-powerup-row"><span class="tut-powerup-info" style="color:rgba(255,255,255,0.8)">Speed Boost can backfire \u2014 the ball gets harder to return!</span></div>
+      <div class="tut-powerup-row"><span class="tut-powerup-info" style="color:rgba(255,255,255,0.8)">Keep rallies going for big coin bonuses</span></div>
+      <div class="tut-powerup-row"><span class="tut-powerup-info" style="color:rgba(255,255,255,0.8)">Shield blocks one shot \u2014 save it for clutch moments</span></div>
+    </div>`
+  }
+];
+
+function renderTutStep() {
+  const step = TUTORIAL_STEPS[tutStep];
+  const total = TUTORIAL_STEPS.length;
+  // Dots
+  tutDots.innerHTML = '';
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'tut-dot' + (i === tutStep ? ' active' : i < tutStep ? ' done' : '');
+    tutDots.appendChild(dot);
+  }
+  // Content
+  const extraHtml = typeof step.extra === 'function' ? step.extra() : step.extra;
+  tutContent.innerHTML = `
+    <div class="tut-icon">${step.icon}</div>
+    <div class="tut-title">${step.title}</div>
+    <div class="tut-desc">${step.desc}</div>
+    ${extraHtml}
+  `;
+  // Nav buttons
+  tutPrev.style.visibility = tutStep === 0 ? 'hidden' : 'visible';
+  tutNext.textContent = tutStep === total - 1 ? 'Got it!' : 'Next';
+  tutSkip.style.display = tutStep === total - 1 ? 'none' : '';
+}
+
+function openTutorial() {
+  tutStep = 0;
+  renderTutStep();
+  homeScreen.classList.add('hidden');
+  tutorialOverlay.classList.add('visible');
+}
+
+function closeTutorial() {
+  tutorialOverlay.classList.remove('visible');
+  homeScreen.classList.remove('hidden');
+}
+
+tutNext.addEventListener('click', () => {
+  if (tutStep < TUTORIAL_STEPS.length - 1) { tutStep++; renderTutStep(); }
+  else closeTutorial();
+});
+tutPrev.addEventListener('click', () => {
+  if (tutStep > 0) { tutStep--; renderTutStep(); }
+});
+tutSkip.addEventListener('click', closeTutorial);
+document.getElementById('homeTutorialBtn').addEventListener('click', openTutorial);
 
 let mpRematchPending = false;
 function start() {
@@ -2904,6 +3344,20 @@ const PEER_CONFIG = {
     ]
   }
 };
+function friendlyPeerError(errType) {
+  const map = {
+    'peer-unavailable': 'Game not found — check the code',
+    'network': 'Network error — check your connection',
+    'disconnected': 'Disconnected from server',
+    'server-error': 'Server error — try again later',
+    'socket-error': 'Connection lost — try again',
+    'socket-closed': 'Connection closed unexpectedly',
+    'unavailable-id': 'Game code conflict — try again',
+    'ssl-unavailable': 'Secure connection failed',
+  };
+  return map[errType] || 'Connection error — try again';
+}
+
 function generateGameCode() {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   let code = '';
@@ -2979,10 +3433,10 @@ function mpCreateGame() {
         conn.on('close', () => handleMpDisconnect());
       });
       peer.on('error', err2 => {
-        document.getElementById('mpHostStatus').textContent = 'Error: ' + err2.type;
+        document.getElementById('mpHostStatus').textContent = friendlyPeerError(err2.type);
       });
     } else {
-      document.getElementById('mpHostStatus').textContent = 'Error: ' + err.type;
+      document.getElementById('mpHostStatus').textContent = friendlyPeerError(err.type);
     }
   });
 }
@@ -3016,7 +3470,7 @@ function mpConnect() {
     conn.on('close', () => handleMpDisconnect());
   });
   peer.on('error', err => {
-    document.getElementById('mpJoinStatus').textContent = err.type === 'peer-unavailable' ? 'Game not found — check the code' : 'Error: ' + err.type;
+    document.getElementById('mpJoinStatus').textContent = friendlyPeerError(err.type);
     mpConnectBtn.disabled = false;
   });
 }
@@ -3095,7 +3549,7 @@ function mpMatchMe() {
   });
 
   peer.on('error', err => {
-    document.getElementById('mpMatchStatus').textContent = 'Error: ' + err.type;
+    document.getElementById('mpMatchStatus').textContent = friendlyPeerError(err.type);
     if (matchPollTimer) { clearInterval(matchPollTimer); matchPollTimer = null; }
   });
 }
@@ -3224,6 +3678,13 @@ mpJoinShowBtn.addEventListener('click', mpShowJoin);
 mpConnectBtn.addEventListener('click', mpConnect);
 mpCodeInput.addEventListener('keydown', e => { if (e.key === 'Enter') mpConnect(); });
 mpBackBtn.addEventListener('click', closeMpOverlay);
+mpCopyBtn.addEventListener('click', () => {
+  const code = document.getElementById('mpCodeDisplay').textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    mpCopyBtn.textContent = 'Copied!';
+    setTimeout(() => { mpCopyBtn.textContent = 'Copy Code'; }, 1500);
+  });
+});
 shopBtnEl.addEventListener('click', openShop);
 shopBackBtn.addEventListener('click', closeShop);
 shopTabs.forEach(tab => {
@@ -3251,7 +3712,9 @@ document.addEventListener('keydown', e => {
     else if (!running && !overlay.classList.contains('hidden')) start();
   }
   if (e.key === 'Escape') {
-    if (document.getElementById('confirmModal').classList.contains('visible')) {
+    if (tutorialOverlay.classList.contains('visible')) {
+      closeTutorial();
+    } else if (document.getElementById('confirmModal').classList.contains('visible')) {
       closeConfirm();
     } else if (running && paused) {
       quitToMenu();
