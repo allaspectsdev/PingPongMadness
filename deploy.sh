@@ -3,11 +3,17 @@
 # Usage: ./deploy.sh
 
 SERVER="root@172.233.144.78"
-REMOTE_PATH="/var/www/pingpongmadness.com/index.html"
-LOCAL_PATH="$(dirname "$0")/index.html"
+REMOTE_DIR="/var/www/pingpongmadness.com"
+DIR="$(dirname "$0")"
 
 echo "Deploying to pingpongmadness.com..."
-scp -o StrictHostKeyChecking=no "$LOCAL_PATH" "$SERVER:$REMOTE_PATH"
+scp -o StrictHostKeyChecking=no \
+  "$DIR/index.html" \
+  "$DIR/og-image.png" \
+  "$DIR/apple-touch-icon.png" \
+  "$DIR/favicon.ico" \
+  "$DIR/favicon-32x32.png" \
+  "$SERVER:$REMOTE_DIR/"
 
 if [ $? -eq 0 ]; then
   echo "Deployed successfully!"
